@@ -1067,6 +1067,93 @@ button { -webkit-appearance:none; touch-action:manipulation; }
 /* Fix position:fixed + keyboard on iOS */
 #onboarding { -webkit-overflow-scrolling:touch; }
 .ob-body { overflow-y:auto; -webkit-overflow-scrolling:touch; }
+
+/* ══ PERSONAL GROWTH DASHBOARD ══ */
+.growth-inner{padding:60px 0 110px}
+.growth-header{padding:0 22px 20px}
+.growth-title{font-size:1.75rem;font-weight:800;letter-spacing:-.03em;color:var(–t1)}
+.growth-sub{font-size:.85rem;color:var(–t2);margin-top:2px}
+.growth-section-label{font-size:.7rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(–t3);padding:0 22px;margin:20px 0 10px}
+.growth-card{background:var(–s1);border:1px solid var(–b1);border-radius:var(–r);padding:16px;margin:0 16px 12px}
+.growth-card-title{font-size:.76rem;font-weight:700;color:var(–t2);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px}
+.growth-quote{background:linear-gradient(135deg,var(–s2),var(–s3));border:1px solid var(–b1);border-radius:var(–r);padding:18px 18px 18px 22px;margin:0 16px 20px;position:relative;overflow:hidden}
+.growth-quote::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(–hi);border-radius:4px 0 0 4px}
+.growth-quote-text{font-size:.88rem;font-style:italic;color:var(–t1);line-height:1.55}
+.growth-quote-date{font-size:.7rem;color:var(–t3);margin-top:8px}
+.growth-empty{text-align:center;padding:18px 0;color:var(–t3);font-size:.84rem}
+/* Baseball */
+.bb-stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:14px}
+.bb-stat-cell{background:var(–s2);border-radius:8px;padding:10px 6px;text-align:center;cursor:pointer;transition:background .2s}
+.bb-stat-cell:active{background:var(–s3)}
+.bb-stat-val{font-size:1.1rem;font-weight:800;color:var(–hi);font-family:var(–fm)}
+.bb-stat-lbl{font-size:.6rem;color:var(–t3);text-transform:uppercase;letter-spacing:.04em;margin-top:3px}
+.bb-drills{display:flex;flex-direction:column;gap:6px}
+.bb-drill-row{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(–s2);border-radius:8px;cursor:pointer;user-select:none;transition:background .2s}
+.bb-drill-row:active{background:var(–s3)}
+.bb-drill-check{width:20px;height:20px;border-radius:6px;border:2px solid var(–b2);display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0}
+.bb-drill-check.done{background:var(–hi);border-color:var(–hi)}
+.bb-drill-check.done::after{content:'✓';color:#fff;font-size:11px;font-weight:700}
+.bb-drill-name{font-size:.88rem;font-weight:500;color:var(–t1)}
+.bb-drill-name.done{text-decoration:line-through;color:var(–t3)}
+.bb-practice-bar{margin-top:14px}
+.bb-pbar-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}
+.bb-pbar-lbl{font-size:.74rem;color:var(–t2)}
+.bb-pbar-val{font-size:.74rem;font-weight:700;color:var(–hi)}
+.bb-pbar-track{height:5px;background:var(–b1);border-radius:4px;overflow:hidden}
+.bb-pbar-fill{height:100%;background:var(–hi);border-radius:4px;transition:width .6s cubic-bezier(.4,0,.2,1)}
+.bb-log-btn{width:100%;margin-top:14px;padding:11px;border-radius:9px;border:none;background:var(–s2);color:var(–hi);font:600 13px var(–ff);cursor:pointer;letter-spacing:.03em;transition:background .2s}
+.bb-log-btn:active{background:var(–s3)}
+/* Fitness summary */
+.fit-row{display:flex;gap:10px;margin-bottom:4px}
+.fit-stat{flex:1;background:var(–s2);border-radius:10px;padding:14px 8px;text-align:center}
+.fit-stat-val{font-size:1.4rem;font-weight:800;color:var(–hi);font-family:var(–fm)}
+.fit-stat-lbl{font-size:.62rem;color:var(–t3);text-transform:uppercase;letter-spacing:.05em;margin-top:3px}
+.fit-train-btn{width:100%;margin-top:12px;padding:13px;border-radius:10px;border:none;background:var(–hi);color:#fff;font:700 14px var(–ff);cursor:pointer;letter-spacing:.03em;transition:opacity .2s}
+.fit-train-btn:active{opacity:.82}
+/* School */
+.sch-gpa-hero{text-align:center;padding:18px 12px;background:var(–s2);border-radius:12px;margin-bottom:16px;cursor:pointer}
+.sch-gpa-val{font-size:3rem;font-weight:900;color:var(–hi);font-family:var(–fm);letter-spacing:-.04em}
+.sch-gpa-lbl{font-size:.7rem;color:var(–t3);text-transform:uppercase;letter-spacing:.07em;margin-top:4px}
+.sch-subjects{display:flex;flex-direction:column;gap:6px;margin-bottom:10px}
+.sch-subject-row{display:flex;align-items:center;padding:10px 12px;background:var(–s2);border-radius:8px;cursor:pointer;gap:10px}
+.sch-subject-name{font-size:.88rem;font-weight:500;color:var(–t1);flex:1}
+.sch-subject-bar{flex:2;height:4px;background:var(–b1);border-radius:2px;overflow:hidden}
+.sch-subject-fill{height:100%;border-radius:2px;transition:width .5s}
+.sch-subject-grade{font-size:.88rem;font-weight:700;min-width:34px;text-align:right}
+.sch-add-btn{width:100%;padding:9px;border-radius:8px;border:1px dashed var(–b2);background:transparent;color:var(–t3);font:500 13px var(–ff);cursor:pointer;margin-top:4px;transition:all .2s}
+.sch-add-btn:active{background:var(–s2)}
+.sch-study-row{display:flex;gap:5px}
+.sch-study-day{flex:1;background:var(–s2);border-radius:8px;padding:10px 2px;text-align:center;cursor:pointer;transition:all .2s}
+.sch-study-day.has-hours{border:1.5px solid rgba(91,141,239,.35)}
+.sch-study-day-lbl{font-size:.54rem;color:var(–t3);text-transform:uppercase;margin-bottom:4px}
+.sch-study-day-h{font-size:.9rem;font-weight:700;color:var(–t1)}
+.sch-study-day-h.zero{color:var(–t3);font-weight:400}
+.sch-assignments{display:flex;flex-direction:column;gap:6px;margin-bottom:4px}
+.sch-assign-row{display:flex;align-items:flex-start;gap:10px;padding:10px 12px;background:var(–s2);border-radius:8px;cursor:pointer;user-select:none}
+.sch-assign-check{width:20px;height:20px;border-radius:6px;border:2px solid var(–b2);display:flex;align-items:center;justify-content:center;transition:all .2s;flex-shrink:0;margin-top:1px}
+.sch-assign-check.done{background:var(–success);border-color:var(–success)}
+.sch-assign-check.done::after{content:'✓';color:#fff;font-size:11px;font-weight:700}
+.sch-assign-info{flex:1;min-width:0}
+.sch-assign-name{font-size:.88rem;font-weight:500;color:var(–t1);line-height:1.3}
+.sch-assign-name.done{text-decoration:line-through;color:var(–t3)}
+.sch-assign-due{font-size:.7rem;color:var(–t3);margin-top:2px}
+.sch-assign-due.overdue{color:var(–danger)}
+.sch-assign-del{background:none;border:none;color:var(–t3);font-size:18px;line-height:1;cursor:pointer;padding:1px 4px;border-radius:4px;margin-top:-1px;transition:color .2s}
+.sch-assign-del:active{color:var(–danger)}
+.sch-add-assign-btn{width:100%;padding:9px;border-radius:8px;border:1px dashed var(–b2);background:transparent;color:var(–t3);font:500 13px var(–ff);cursor:pointer;transition:all .2s}
+.sch-add-assign-btn:active{background:var(–s2)}
+/* Growth modal */
+.growth-modal{position:fixed;inset:0;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);z-index:800;display:flex;align-items:flex-end;justify-content:center}
+.growth-modal-box{background:var(–s1);border:1px solid var(–b1);border-radius:20px 20px 0 0;padding:24px 22px 44px;width:100%;max-width:500px;animation:slideUp .22s cubic-bezier(.4,0,.2,1)}
+.growth-modal-title{font-size:1rem;font-weight:700;color:var(–t1);margin-bottom:18px}
+.growth-modal-field{margin-bottom:14px}
+.growth-modal-label{font-size:.72rem;color:var(–t2);font-weight:600;letter-spacing:.05em;text-transform:uppercase;margin-bottom:6px}
+.growth-modal-inp{width:100%;background:var(–s2);border:1px solid var(–b1);border-radius:9px;padding:11px 14px;color:var(–t1);font:500 15px var(–ff);outline:none;transition:border-color .2s}
+.growth-modal-inp:focus{border-color:var(–hi)}
+.growth-modal-actions{display:flex;gap:10px;margin-top:18px}
+.growth-modal-cancel{flex:1;padding:12px;border-radius:10px;border:1px solid var(–b1);background:transparent;color:var(–t2);font:600 14px var(–ff);cursor:pointer}
+.growth-modal-save{flex:2;padding:12px;border-radius:10px;border:none;background:var(–hi);color:#fff;font:700 14px var(–ff);cursor:pointer}
+.growth-modal-save:active{opacity:.85}
 </style>
 
 </head>
@@ -1630,6 +1717,65 @@ button { -webkit-appearance:none; touch-action:manipulation; }
   </div>
 </div>
 
+<!-- PERSONAL GROWTH DASHBOARD -->
+<div class="scr" id="scr-growth">
+  <div class="growth-inner">
+    <div class="growth-header">
+      <div class="growth-title">My Growth</div>
+      <div class="growth-sub">Become the best version of yourself</div>
+    </div>
+
+    <div class="growth-quote" id="growth-quote"></div>
+
+    <!-- BASEBALL -->
+    <div class="growth-section-label">⚾ Baseball</div>
+    <div class="growth-card">
+      <div class="growth-card-title">Season Stats <span style="font-size:.68rem;color:var(–t3);text-transform:none;font-weight:400;letter-spacing:0">(tap to edit)</span></div>
+      <div class="bb-stats-grid" id="bb-stats-grid"></div>
+      <div class="bb-practice-bar">
+        <div class="bb-pbar-top">
+          <div class="bb-pbar-lbl">Practices this week</div>
+          <div class="bb-pbar-val" id="bb-pbar-val">0 / 5 days</div>
+        </div>
+        <div class="bb-pbar-track"><div class="bb-pbar-fill" id="bb-pbar-fill" style="width:0%"></div></div>
+      </div>
+    </div>
+    <div class="growth-card">
+      <div class="growth-card-title">Today's Drills</div>
+      <div class="bb-drills" id="bb-drills-list"></div>
+      <button class="bb-log-btn" onclick="bbLogPractice()">+ Mark Today as Practice Day</button>
+    </div>
+
+    <!-- FITNESS -->
+    <div class="growth-section-label">💪 Fitness</div>
+    <div class="growth-card">
+      <div class="fit-row" id="fit-stats-row"></div>
+      <button class="fit-train-btn" onclick="goTo('workout')">Start a Workout →</button>
+    </div>
+
+    <!-- SCHOOL -->
+    <div class="growth-section-label">📚 School</div>
+    <div class="growth-card">
+      <div class="sch-gpa-hero" onclick="schEditGPA()">
+        <div class="sch-gpa-val" id="sch-gpa-val">—</div>
+        <div class="sch-gpa-lbl">GPA · tap to update</div>
+      </div>
+      <div class="growth-card-title">Subjects</div>
+      <div class="sch-subjects" id="sch-subjects-list"></div>
+      <button class="sch-add-btn" onclick="schAddSubject()">+ Add Subject</button>
+    </div>
+    <div class="growth-card">
+      <div class="growth-card-title">Study Hours This Week</div>
+      <div class="sch-study-row" id="sch-study-row"></div>
+    </div>
+    <div class="growth-card">
+      <div class="growth-card-title">Assignments</div>
+      <div class="sch-assignments" id="sch-assignments-list"></div>
+      <button class="sch-add-assign-btn" onclick="schAddAssignment()">+ Add Assignment</button>
+    </div>
+  </div>
+</div>
+
 <!-- NAV (6 items — Settings moved to top gear button) -->
 
 <nav>
@@ -1656,6 +1802,10 @@ button { -webkit-appearance:none; touch-action:manipulation; }
   <button class="nb" id="nb-prof" onclick="goTo('prof')">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     <span>Me</span><div class="nb-pip"></div>
+  </button>
+  <button class="nb" id="nb-growth" onclick="goTo('growth')">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+    <span>Growth</span><div class="nb-pip"></div>
   </button>
 </nav>
 <!-- SETTINGS GEAR — top right floating button -->
@@ -2796,6 +2946,7 @@ function goTo(id){
   if(id==='settings')renderSettings();
   if(id==='recovery')renderRecovery();
   if(id==='progress')renderProgress();
+  if(id==='growth')renderGrowth();
 }
 
 // ═══════════════════════════════════
@@ -4057,6 +4208,392 @@ function finishW(){
   finishW_orig();
   setTimeout(checkAchievements, 800);
 }
+
+// ═══════════════════════════════════
+// PERSONAL GROWTH DASHBOARD
+// ═══════════════════════════════════
+
+const GROWTH_BB_KEY='mm_growth_bb';
+const GROWTH_SCH_KEY='mm_growth_sch';
+
+const GROWTH_QUOTES=[
+  'Champions aren\'t made in gyms — they\'re made from something deep inside them.',
+  'The harder you work for something, the greater you\'ll feel when you achieve it.',
+  'Push yourself because no one else is going to do it for you.',
+  'Great things never come from comfort zones. Keep pushing.',
+  'Success is the sum of small efforts repeated day in and day out.',
+  'Work like there\'s someone working 24 hours a day to take it all away from you.',
+  'Don\'t watch the clock; do what it does. Keep going.',
+  'Believe in yourself — there\'s something inside you greater than any obstacle.',
+  'The only way to grow is to challenge yourself every single day.',
+  'Your future self is watching you right now through your memories.',
+  'Every day is another chance to be better than you were yesterday.',
+  'Elite isn\'t a level — it\'s a mindset you choose every morning.',
+  'Hard work beats talent when talent doesn\'t work hard.',
+  'Be so good they can\'t ignore you.',
+];
+
+const BB_DRILLS={
+  batting:'Batting Practice',
+  fielding:'Fielding / Grounders',
+  pitching:'Bullpen / Pitching',
+  catching:'Catching & Pop Times',
+  baserunning:'Baserunning & Leads',
+  conditioning:'Conditioning / Sprints',
+  video:'Film & Video Review'
+};
+
+function bbLoad(){
+  return load(GROWTH_BB_KEY)||{
+    stats:{ab:0,h:0,hr:0,rbi:0,ip:'0',er:0,k:0,bbWalks:0},
+    practices:[],
+    weeklyGoal:5,
+    drills:{batting:false,fielding:false,pitching:false,catching:false,baserunning:false,conditioning:false,video:false},
+    drillDate:''
+  };
+}
+function bbSave(d){save(GROWTH_BB_KEY,d);}
+
+function schLoad(){
+  return load(GROWTH_SCH_KEY)||{gpa:'',subjects:[],studyLog:[],assignments:[]};
+}
+function schSave(d){save(GROWTH_SCH_KEY,d);}
+
+function gradeColor(g){
+  const u=(g||'').toUpperCase().trim();
+  if(u.startsWith('A'))return'#30c48a';
+  if(u.startsWith('B'))return'#5b8def';
+  if(u.startsWith('C'))return'#f0a030';
+  if(u.startsWith('D')||u==='F')return'#e05050';
+  return'#8b8b96';
+}
+function gradeBarPct(g){
+  const map={'A+':100,'A':96,'A-':92,'B+':86,'B':82,'B-':78,'C+':72,'C':68,'C-':64,'D+':56,'D':52,'D-':48,'F':20};
+  return map[(g||'').trim().toUpperCase()]||0;
+}
+
+function growthDateKey(offsetDays){
+  const d=new Date();
+  d.setDate(d.getDate()+offsetDays);
+  return d.toISOString().slice(0,10);
+}
+function growthWeekDateKey(dayOfWeek){
+  const now=new Date();
+  const diff=dayOfWeek-now.getDay();
+  const d=new Date(now);
+  d.setDate(d.getDate()+diff);
+  return d.toISOString().slice(0,10);
+}
+
+function renderGrowth(){
+  // Quote of the day
+  const qEl=document.getElementById('growth-quote');
+  if(qEl){
+    const idx=new Date().getDay()%GROWTH_QUOTES.length;
+    const dateStr=new Date().toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});
+    qEl.innerHTML=`<div class="growth-quote-text">"${GROWTH_QUOTES[idx]}"</div><div class="growth-quote-date">${dateStr}</div>`;
+  }
+  renderBBSection();
+  renderFitSummary();
+  renderSchoolSection();
+}
+
+// ─── BASEBALL ───────────────────────
+function renderBBSection(){
+  const bb=bbLoad();
+  const today=growthDateKey(0);
+
+  // Reset drills if it's a new day
+  if(bb.drillDate!==today){
+    Object.keys(bb.drills||{}).forEach(k=>bb.drills[k]=false);
+    bb.drillDate=today;
+    bbSave(bb);
+  }
+
+  // Season stats grid
+  const sg=document.getElementById('bb-stats-grid');
+  if(sg){
+    const s=bb.stats;
+    const avg=s.ab>0?(s.h/s.ab).toFixed(3).replace(/^0/,''):'.000';
+    const era=parseFloat(s.ip)>0?((s.er*9)/parseFloat(s.ip)).toFixed(2):'—';
+    const cells=[
+      {v:avg,l:'AVG',k:'avg'},
+      {v:s.hr||0,l:'HR',k:'hr'},
+      {v:s.rbi||0,l:'RBI',k:'rbi'},
+      {v:era,l:'ERA',k:'era'},
+    ];
+    sg.innerHTML=cells.map(c=>`<div class="bb-stat-cell" onclick="bbEditStat('${c.k}')"><div class="bb-stat-val">${c.v}</div><div class="bb-stat-lbl">${c.l}</div></div>`).join('');
+  }
+
+  // Practice progress bar (last 7 days)
+  const weekAgo=new Date();weekAgo.setDate(weekAgo.getDate()-6);
+  const weekStr=weekAgo.toISOString().slice(0,10);
+  const weekCount=(bb.practices||[]).filter(d=>d>=weekStr).length;
+  const goal=bb.weeklyGoal||5;
+  const pct=Math.min(100,Math.round((weekCount/goal)*100));
+  const pv=document.getElementById('bb-pbar-val');
+  const pf=document.getElementById('bb-pbar-fill');
+  if(pv)pv.textContent=`${weekCount} / ${goal} days`;
+  if(pf)pf.style.width=pct+'%';
+
+  // Drills checklist
+  const dl=document.getElementById('bb-drills-list');
+  if(dl){
+    dl.innerHTML=Object.entries(BB_DRILLS).map(([k,name])=>{
+      const done=!!(bb.drills&&bb.drills[k]);
+      return`<div class="bb-drill-row" onclick="bbToggleDrill('${k}')">
+        <div class="bb-drill-check${done?' done':''}"></div>
+        <div class="bb-drill-name${done?' done':''}">${name}</div>
+      </div>`;
+    }).join('');
+  }
+}
+
+function bbToggleDrill(key){
+  const bb=bbLoad();
+  if(!bb.drills)bb.drills={};
+  bb.drills[key]=!bb.drills[key];
+  bbSave(bb);
+  renderBBSection();
+}
+
+function bbLogPractice(){
+  const bb=bbLoad();
+  const today=growthDateKey(0);
+  if(!bb.practices)bb.practices=[];
+  if(!bb.practices.includes(today)){
+    bb.practices.push(today);
+    bbSave(bb);
+    showToast('Practice logged for today!');
+  }else{
+    showToast('Already logged today — keep grinding!');
+  }
+  renderBBSection();
+}
+
+function bbEditStat(key){
+  const bb=bbLoad();
+  const s=bb.stats;
+  let fields='';
+  if(key==='avg'){
+    fields=`<div class="growth-modal-field"><div class="growth-modal-label">At Bats (AB)</div><input class="growth-modal-inp" id="gm-ab" type="number" inputmode="numeric" value="${s.ab||0}"/></div>
+            <div class="growth-modal-field"><div class="growth-modal-label">Hits (H)</div><input class="growth-modal-inp" id="gm-h" type="number" inputmode="numeric" value="${s.h||0}"/></div>`;
+  }else if(key==='hr'){
+    fields=`<div class="growth-modal-field"><div class="growth-modal-label">Home Runs</div><input class="growth-modal-inp" id="gm-hr" type="number" inputmode="numeric" value="${s.hr||0}"/></div>`;
+  }else if(key==='rbi'){
+    fields=`<div class="growth-modal-field"><div class="growth-modal-label">RBI</div><input class="growth-modal-inp" id="gm-rbi" type="number" inputmode="numeric" value="${s.rbi||0}"/></div>`;
+  }else if(key==='era'){
+    fields=`<div class="growth-modal-field"><div class="growth-modal-label">Innings Pitched (IP)</div><input class="growth-modal-inp" id="gm-ip" type="number" inputmode="decimal" step="0.1" value="${s.ip||0}"/></div>
+            <div class="growth-modal-field"><div class="growth-modal-label">Earned Runs (ER)</div><input class="growth-modal-inp" id="gm-er" type="number" inputmode="numeric" value="${s.er||0}"/></div>`;
+  }
+  showGrowthModal('Update Season Stats',fields,()=>{
+    if(key==='avg'){s.ab=parseInt(document.getElementById('gm-ab').value)||0;s.h=parseInt(document.getElementById('gm-h').value)||0;}
+    else if(key==='hr'){s.hr=parseInt(document.getElementById('gm-hr').value)||0;}
+    else if(key==='rbi'){s.rbi=parseInt(document.getElementById('gm-rbi').value)||0;}
+    else if(key==='era'){s.ip=document.getElementById('gm-ip').value||'0';s.er=parseInt(document.getElementById('gm-er').value)||0;}
+    bb.stats=s;bbSave(bb);renderBBSection();
+  });
+}
+
+// ─── FITNESS SUMMARY ────────────────
+function renderFitSummary(){
+  const row=document.getElementById('fit-stats-row');
+  if(!row)return;
+  const streak=calcStreak();
+  const now=Date.now();
+  const weekCount=(WL||[]).filter(w=>new Date(w.iso).getTime()>=now-7*86400000).length;
+  const lastW=(WL&&WL.length)?new Date(WL[WL.length-1].iso):null;
+  const lastStr=lastW?lastW.toLocaleDateString([],{month:'short',day:'numeric'}):'—';
+  row.innerHTML=`
+    <div class="fit-stat"><div class="fit-stat-val">${streak}</div><div class="fit-stat-lbl">Day Streak</div></div>
+    <div class="fit-stat"><div class="fit-stat-val">${weekCount}</div><div class="fit-stat-lbl">This Week</div></div>
+    <div class="fit-stat"><div class="fit-stat-val" style="font-size:.92rem;padding-top:2px">${lastStr}</div><div class="fit-stat-lbl">Last Workout</div></div>
+  `;
+}
+
+// ─── SCHOOL ─────────────────────────
+function renderSchoolSection(){
+  const sch=schLoad();
+
+  // GPA
+  const gpaEl=document.getElementById('sch-gpa-val');
+  if(gpaEl)gpaEl.textContent=sch.gpa||'—';
+
+  // Subjects list
+  const sl=document.getElementById('sch-subjects-list');
+  if(sl){
+    if(!(sch.subjects||[]).length){
+      sl.innerHTML='<div class="growth-empty">No subjects yet — add one below</div>';
+    }else{
+      sl.innerHTML=sch.subjects.map((s,i)=>{
+        const col=s.grade?gradeColor(s.grade):'#8b8b96';
+        const pct=s.grade?gradeBarPct(s.grade):0;
+        return`<div class="sch-subject-row" onclick="schEditSubject(${i})">
+          <div class="sch-subject-name">${s.name}</div>
+          <div class="sch-subject-bar"><div class="sch-subject-fill" style="width:${pct}%;background:${col}"></div></div>
+          <div class="sch-subject-grade" style="color:${col}">${s.grade||'—'}</div>
+        </div>`;
+      }).join('');
+    }
+  }
+
+  // Study hours (Sun–Sat of current week)
+  const sr=document.getElementById('sch-study-row');
+  if(sr){
+    const days=['S','M','T','W','T','F','S'];
+    const todayDow=new Date().getDay();
+    sr.innerHTML=days.map((d,i)=>{
+      const dateKey=growthWeekDateKey(i);
+      const log=(sch.studyLog||[]).find(l=>l.date===dateKey);
+      const hrs=log?log.hours:0;
+      return`<div class="sch-study-day${hrs>0?' has-hours':''}" onclick="schLogStudy('${dateKey}','${['Sun','Mon','Tue','Wed','Thu','Fri','Sat'][i]}')">
+        <div class="sch-study-day-lbl">${d}</div>
+        <div class="sch-study-day-h${hrs>0?'':' zero'}">${hrs>0?hrs:'—'}</div>
+      </div>`;
+    }).join('');
+  }
+
+  // Assignments
+  const al=document.getElementById('sch-assignments-list');
+  if(al){
+    const assigns=sch.assignments||[];
+    if(!assigns.length){
+      al.innerHTML='<div class="growth-empty">All caught up! No assignments yet.</div>';
+    }else{
+      const today=growthDateKey(0);
+      al.innerHTML=assigns.map((a,i)=>{
+        const overdue=a.due&&a.due<today&&!a.done;
+        const dueLabel=a.due?new Date(a.due+'T12:00:00').toLocaleDateString([],{month:'short',day:'numeric'}):'';
+        return`<div class="sch-assign-row" onclick="schToggleAssign(${i})">
+          <div class="sch-assign-check${a.done?' done':''}"></div>
+          <div class="sch-assign-info">
+            <div class="sch-assign-name${a.done?' done':''}">${a.text}</div>
+            ${dueLabel?`<div class="sch-assign-due${overdue?' overdue':''}">Due ${dueLabel}${overdue?' — Overdue':''}</div>`:''}
+          </div>
+          <button class="sch-assign-del" onclick="event.stopPropagation();schDeleteAssign(${i})">×</button>
+        </div>`;
+      }).join('');
+    }
+  }
+}
+
+function schEditGPA(){
+  const sch=schLoad();
+  showGrowthModal('Update GPA',
+    `<div class="growth-modal-field"><div class="growth-modal-label">GPA (0.00 – 4.00)</div><input class="growth-modal-inp" id="gm-gpa" type="number" min="0" max="4" step="0.01" inputmode="decimal" value="${sch.gpa||''}" placeholder="e.g. 3.75"/></div>`,
+    ()=>{
+      const v=parseFloat(document.getElementById('gm-gpa').value);
+      if(!isNaN(v)){sch.gpa=Math.min(4,Math.max(0,v)).toFixed(2);}
+      schSave(sch);renderSchoolSection();
+    }
+  );
+}
+
+function schAddSubject(){
+  showGrowthModal('Add Subject',
+    `<div class="growth-modal-field"><div class="growth-modal-label">Subject Name</div><input class="growth-modal-inp" id="gm-sname" type="text" placeholder="e.g. Math, English, Biology" autocomplete="off"/></div>
+     <div class="growth-modal-field"><div class="growth-modal-label">Current Grade</div><input class="growth-modal-inp" id="gm-sgrade" type="text" placeholder="A, B+, C-, etc." maxlength="3" autocomplete="off"/></div>`,
+    ()=>{
+      const name=(document.getElementById('gm-sname').value||'').trim();
+      const grade=(document.getElementById('gm-sgrade').value||'').trim();
+      if(!name)return;
+      const sch=schLoad();
+      if(!sch.subjects)sch.subjects=[];
+      sch.subjects.push({name,grade});
+      schSave(sch);renderSchoolSection();
+    }
+  );
+}
+
+function schEditSubject(idx){
+  const sch=schLoad();
+  const s=sch.subjects[idx]||{};
+  showGrowthModal('Edit Subject',
+    `<div class="growth-modal-field"><div class="growth-modal-label">Subject Name</div><input class="growth-modal-inp" id="gm-sname" type="text" value="${s.name||''}" autocomplete="off"/></div>
+     <div class="growth-modal-field"><div class="growth-modal-label">Current Grade</div><input class="growth-modal-inp" id="gm-sgrade" type="text" value="${s.grade||''}" maxlength="3"/></div>
+     <button style="width:100%;margin-top:8px;padding:9px;border-radius:8px;border:1.5px solid rgba(224,80,80,.35);background:transparent;color:#e05050;font:600 13px var(--ff);cursor:pointer" onclick="schDeleteSubject(${idx});closeGrowthModal()">Remove Subject</button>`,
+    ()=>{
+      const name=(document.getElementById('gm-sname').value||'').trim();
+      const grade=(document.getElementById('gm-sgrade').value||'').trim();
+      if(!name)return;
+      sch.subjects[idx]={name,grade};
+      schSave(sch);renderSchoolSection();
+    }
+  );
+}
+
+function schDeleteSubject(idx){
+  const sch=schLoad();
+  sch.subjects.splice(idx,1);
+  schSave(sch);renderSchoolSection();
+}
+
+function schLogStudy(dateKey,dayLabel){
+  const sch=schLoad();
+  const existing=(sch.studyLog||[]).find(l=>l.date===dateKey);
+  const cur=existing?existing.hours:0;
+  showGrowthModal(`Study Hours — ${dayLabel}`,
+    `<div class="growth-modal-field"><div class="growth-modal-label">Hours Studied</div><input class="growth-modal-inp" id="gm-studyh" type="number" min="0" max="24" step="0.5" inputmode="decimal" value="${cur}"/></div>`,
+    ()=>{
+      const v=parseFloat(document.getElementById('gm-studyh').value)||0;
+      if(!sch.studyLog)sch.studyLog=[];
+      const i=sch.studyLog.findIndex(l=>l.date===dateKey);
+      if(i>=0)sch.studyLog[i].hours=v;else sch.studyLog.push({date:dateKey,hours:v});
+      schSave(sch);renderSchoolSection();
+    }
+  );
+}
+
+function schAddAssignment(){
+  showGrowthModal('Add Assignment',
+    `<div class="growth-modal-field"><div class="growth-modal-label">Assignment</div><input class="growth-modal-inp" id="gm-atext" type="text" placeholder="e.g. Chapter 5 reading" autocomplete="off"/></div>
+     <div class="growth-modal-field"><div class="growth-modal-label">Due Date (optional)</div><input class="growth-modal-inp" id="gm-adue" type="date"/></div>`,
+    ()=>{
+      const text=(document.getElementById('gm-atext').value||'').trim();
+      if(!text)return;
+      const due=document.getElementById('gm-adue').value||'';
+      const sch=schLoad();
+      if(!sch.assignments)sch.assignments=[];
+      sch.assignments.push({text,due,done:false});
+      schSave(sch);renderSchoolSection();
+    }
+  );
+}
+
+function schToggleAssign(idx){
+  const sch=schLoad();
+  sch.assignments[idx].done=!sch.assignments[idx].done;
+  schSave(sch);renderSchoolSection();
+}
+
+function schDeleteAssign(idx){
+  const sch=schLoad();
+  sch.assignments.splice(idx,1);
+  schSave(sch);renderSchoolSection();
+}
+
+// ─── GROWTH MODAL SYSTEM ────────────
+let _gmCb=null;
+function showGrowthModal(title,bodyHtml,onSave){
+  closeGrowthModal();
+  _gmCb=onSave;
+  const el=document.createElement('div');
+  el.className='growth-modal';
+  el.id='gm-overlay';
+  el.innerHTML=`<div class="growth-modal-box">
+    <div class="growth-modal-title">${title}</div>
+    ${bodyHtml}
+    <div class="growth-modal-actions">
+      <button class="growth-modal-cancel" onclick="closeGrowthModal()">Cancel</button>
+      <button class="growth-modal-save" onclick="saveGrowthModal()">Save</button>
+    </div>
+  </div>`;
+  el.addEventListener('click',e=>{if(e.target===el)closeGrowthModal();});
+  document.body.appendChild(el);
+  setTimeout(()=>{const f=el.querySelector('.growth-modal-inp');if(f)f.focus();},80);
+}
+function saveGrowthModal(){if(_gmCb)_gmCb();closeGrowthModal();}
+function closeGrowthModal(){const el=document.getElementById('gm-overlay');if(el)el.remove();_gmCb=null;}
 </script>
 
 </body>
