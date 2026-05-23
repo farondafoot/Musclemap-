@@ -1,0 +1,57 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-crypto}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-crypto_secret}
+      POSTGRES_DB: ${POSTGRES_DB:-crypto_tracker}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-crypto}"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  monitor:
+    build:
+      context: .
+      dockerfile: Dockerfile.monitor
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-crypto}:${POSTGRES_PASSWORD:-crypto_secret}@postgres:5432/${POSTGRES_DB:-crypto_tracker}
+      HELIUS_API_KEY: ${HELIUS_API_KEY}
+      SOLANA_RPC_URL: ${SOLANA_RPC_URL:-https://api.mainnet-beta.solana.com}
+      BIRDEYE_API_KEY: ${BIRDEYE_API_KEY}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN}
+      TELEGRAM_CHAT_ID: ${TELEGRAM_CHAT_ID}
+      POLL_INTERVAL_MS: ${POLL_INTERVAL_MS:-30000}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+    profiles:
+      - monitor
+
+  dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "${DASHBOARD_PORT:-3000}:3000"
+    environment:
+      DATABASE_URL: postgresql://${POSTGRES_USER:-crypto}:${POSTGRES_PASSWORD:-crypto_secret}@postgres:5432/${POSTGRES_DB:-crypto_tracker}
+    profiles:
+      - dashboard
+
+volumes:
+  postgres_data:

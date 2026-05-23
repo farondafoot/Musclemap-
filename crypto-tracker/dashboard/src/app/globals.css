@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  background: #0a0a0b;
+  color: #ededef;
+  font-family: 'Inter', system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #111113; }
+::-webkit-scrollbar-thumb { background: #38383f; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #52525c; }
+
+/* Score ring animation */
+@keyframes ring-fill {
+  from { stroke-dashoffset: 100; }
+  to { stroke-dashoffset: var(--target); }
+}

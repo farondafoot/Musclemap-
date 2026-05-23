@@ -1,0 +1,282 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ──────────────────────────────────────────────────────────────────
+
+enum Chain {
+  SOLANA
+  ETHEREUM
+  BASE
+}
+
+enum TradeAction {
+  BUY
+  SELL
+}
+
+enum AlertType {
+  NEW_TRADE
+  RISK_FLAG
+  SCORE_CHANGE
+  WALLET_ADDED
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
+enum WalletStatus {
+  ACTIVE
+  PAUSED
+  ARCHIVED
+}
+
+// ─── Core Models ─────────────────────────────────────────────────────────────
+
+model TrackedWallet {
+  id              String       @id @default(cuid())
+  address         String
+  chain           Chain        @default(SOLANA)
+  label           String?
+  source          String?
+  notes           String?      @db.Text
+  status          WalletStatus @default(ACTIVE)
+
+  // Composite score (0-100), denormalized for fast leaderboard queries
+  score           Float        @default(0)
+  scoreUpdatedAt  DateTime?
+
+  // Manual confidence override (0-100); null = use computed score
+  confidenceScore Float?
+
+  // Polling state — cursor for incremental fetch
+  lastSignature   String?
+  lastPolledAt    DateTime?
+
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  trades          Trade[]
+  positions       Position[]
+  scoreHistory    WalletScore[]
+  alerts          Alert[]
+
+  @@unique([address, chain])
+  @@index([chain, status])
+  @@index([score])
+}
+
+// ─── Token metadata cache ─────────────────────────────────────────────────────
+
+model TokenCache {
+  address         String   @id
+  chain           Chain    @default(SOLANA)
+  symbol          String?
+  name            String?
+  decimals        Int?     @default(9)
+  logoUri         String?
+
+  // Pricing / market data (DexScreener / Birdeye)
+  priceUsd        Decimal? @db.Decimal(30, 10)
+  liquidityUsd    Decimal? @db.Decimal(20, 2)
+  marketCapUsd    Decimal? @db.Decimal(20, 2)
+  fdvUsd          Decimal? @db.Decimal(20, 2)
+  volume24hUsd    Decimal? @db.Decimal(20, 2)
+  dexPairAddress  String?
+
+  // On-chain metadata
+  mintTimestamp   DateTime?
+  holderCount     Int?
+  top10HolderPct  Decimal? @db.Decimal(5, 4)  // 0-1
+
+  // Risk metadata
+  isScam          Boolean  @default(false)
+  scamNotes       String?
+
+  // Cache control
+  fetchedAt       DateTime @updatedAt
+  createdAt       DateTime @default(now())
+
+  @@index([chain])
+  @@index([fetchedAt])
+}
+
+// ─── Trade ───────────────────────────────────────────────────────────────────
+
+model Trade {
+  id              String      @id @default(cuid())
+
+  walletId        String
+  wallet          TrackedWallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  chain           Chain
+  txHash          String
+  slot            BigInt?
+  timestamp       DateTime
+
+  action          TradeAction
+
+  // Input side of the swap (what wallet gave)
+  inputMint       String
+  inputSymbol     String?
+  inputAmount     Decimal     @db.Decimal(38, 9)
+
+  // Output side of the swap (what wallet received)
+  outputMint      String
+  outputSymbol    String?
+  outputAmount    Decimal     @db.Decimal(38, 9)
+
+  // Quote asset (SOL, USDC, etc.) and USD value at trade time
+  quoteAsset      String      @default("SOL")
+  quoteAmount     Decimal?    @db.Decimal(38, 9)
+  priceUsd        Decimal?    @db.Decimal(30, 10)
+  valueUsd        Decimal?    @db.Decimal(20, 2)
+
+  // PnL — populated by PnL pairing step after a SELL is matched to its BUY
+  realizedPnlUsd  Decimal?    @db.Decimal(20, 6)
+  roiPercent      Decimal?    @db.Decimal(10, 4)
+  holdSeconds     Int?
+
+  isWin           Boolean?
+  isPaired        Boolean     @default(false)  // true once PnL pairing step processed this
+
+  // Token context snapshot at trade time
+  liquidityUsd    Decimal?    @db.Decimal(20, 2)
+  marketCapUsd    Decimal?    @db.Decimal(20, 2)
+  tokenAgeMinutes Decimal?    @db.Decimal(10, 2)
+
+  // Risk
+  riskFlags       String[]
+  riskScore       Float       @default(0)
+  riskLevel       RiskLevel   @default(LOW)
+
+  source          String?     // "JUPITER", "RAYDIUM", etc.
+  rawData         Json?       // Helius enriched tx payload for replay
+
+  createdAt       DateTime    @default(now())
+
+  @@unique([txHash, chain])
+  @@index([walletId, timestamp])
+  @@index([outputMint])
+  @@index([inputMint])
+  @@index([timestamp])
+  @@index([walletId, isPaired])
+}
+
+// ─── Position (FIFO cost-basis tracking for open positions) ──────────────────
+
+model Position {
+  id              String   @id @default(cuid())
+
+  walletId        String
+  wallet          TrackedWallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  tokenAddress    String
+  chain           Chain
+
+  tokenAmount     Decimal  @default(0) @db.Decimal(38, 9)
+  avgEntryPriceUsd Decimal @default(0) @db.Decimal(30, 10)
+  totalCostUsd    Decimal  @default(0) @db.Decimal(20, 6)
+
+  realizedPnl     Decimal  @default(0) @db.Decimal(20, 6)
+
+  isOpen          Boolean  @default(true)
+  openedAt        DateTime
+  closedAt        DateTime?
+  updatedAt       DateTime @updatedAt
+
+  @@unique([walletId, tokenAddress, chain])
+  @@index([walletId, isOpen])
+}
+
+// ─── Wallet Scores ────────────────────────────────────────────────────────────
+
+model WalletScore {
+  id              String   @id @default(cuid())
+
+  walletId        String
+  wallet          TrackedWallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  // Composite score
+  score           Float
+
+  // Component raw scores (0-100 before weight is applied)
+  pnlScore        Float    @default(0)
+  winRateScore    Float    @default(0)
+  roiScore        Float    @default(0)
+  holdTimeScore   Float    @default(0)
+  drawdownScore   Float    @default(0)
+  consistencyScore Float   @default(0)
+  liquidityScore  Float    @default(0)
+
+  // Penalties applied
+  penaltyOneHitWonder Float @default(0)
+  penaltyIlliquid     Float @default(0)
+  penaltyInactive     Float @default(0)
+
+  // Raw metrics
+  tradeCount         Int      @default(0)
+  winCount           Int      @default(0)
+  totalRealizedPnl   Decimal  @default(0) @db.Decimal(20, 6)
+  winRate            Decimal  @default(0) @db.Decimal(5, 4)
+  medianRoiPct       Decimal  @default(0) @db.Decimal(10, 4)
+  medianHoldHours    Decimal  @default(0) @db.Decimal(10, 2)
+  maxDrawdownPct     Decimal  @default(0) @db.Decimal(10, 4)
+
+  // Period performance
+  pnl7d              Decimal? @db.Decimal(20, 6)
+  pnl30d             Decimal? @db.Decimal(20, 6)
+  pnl90d             Decimal? @db.Decimal(20, 6)
+  winRate7d          Decimal? @db.Decimal(5, 4)
+  winRate30d         Decimal? @db.Decimal(5, 4)
+  winRate90d         Decimal? @db.Decimal(5, 4)
+
+  calculatedAt    DateTime @default(now())
+
+  @@index([walletId, calculatedAt])
+}
+
+// ─── Alerts ───────────────────────────────────────────────────────────────────
+
+model Alert {
+  id              String    @id @default(cuid())
+
+  walletId        String
+  wallet          TrackedWallet @relation(fields: [walletId], references: [id], onDelete: Cascade)
+
+  tradeId         String?
+  type            AlertType
+  riskLevel       RiskLevel @default(LOW)
+
+  message         String    @db.Text
+  payload         Json?     // full structured payload for re-formatting
+
+  // Delivery state
+  sent            Boolean   @default(false)
+  sentAt          DateTime?
+  telegramMsgId   Int?
+  sendError       String?
+
+  // Snapshot fields for dashboard display without joins
+  walletScore     Float?
+  tokenSymbol     String?
+  tokenAddress    String?
+  tradeAction     TradeAction?
+  tradeValueUsd   Decimal?  @db.Decimal(20, 2)
+  riskFlags       String[]
+
+  createdAt       DateTime  @default(now())
+
+  @@index([walletId, createdAt])
+  @@index([sent, createdAt])
+  @@index([type, createdAt])
+}
