@@ -8,212 +8,247 @@
 <meta name="apple-mobile-web-app-title" content="GradeUp"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="theme-color" content="#0a0a0b"/>
-<title>GradeUp — Grade Tracker</title>
+<title>GradeUp</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet"/>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;touch-action:manipulation}
 :root{
-  --bg:#0a0a0b;
-  --s1:#111113;
-  --s2:#19191c;
-  --s3:#222226;
-  --b1:#2a2a30;
-  --b2:#38383f;
-  --b3:#52525c;
-  --t1:#ededef;
-  --t2:#8b8b96;
-  --t3:#4a4a54;
-  --hi:#5b8def;
-  --hi2:#4070d4;
-  --success:#30c48a;
-  --warn:#f0a030;
-  --danger:#e05050;
-  --r:12px;
-  --r2:8px;
-  --ff:'Inter',sans-serif;
+  --bg:#0a0a0b;--s1:#111113;--s2:#19191c;--s3:#222226;
+  --b1:#2a2a30;--b2:#38383f;--b3:#52525c;
+  --t1:#ededef;--t2:#8b8b96;--t3:#4a4a54;
+  --hi:#5b8def;--hi2:#4070d4;
+  --success:#30c48a;--warn:#f0a030;--danger:#e05050;--purple:#9b6dff;
+  --r:12px;--r2:8px;--ff:'Inter',sans-serif;
 }
 html,body{height:100%;background:var(--bg);color:var(--t1);font-family:var(--ff);overflow-x:hidden}
 body{padding-bottom:90px;padding-top:env(safe-area-inset-top,0)}
 
-/* ── NAV ── */
-.nav{display:flex;align-items:center;justify-content:space-between;padding:16px 20px 12px;position:sticky;top:0;z-index:100;background:rgba(10,10,11,0.9);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--b1)}
-.nav-logo{font-size:18px;font-weight:800;letter-spacing:-0.5px;color:var(--t1)}
+/* NAV */
+.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 20px 12px;position:sticky;top:0;z-index:100;background:rgba(10,10,11,0.92);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-bottom:1px solid var(--b1)}
+.nav-logo{font-size:18px;font-weight:800;letter-spacing:-0.5px}
 .nav-logo span{color:var(--hi)}
-.nav-actions{display:flex;gap:8px}
-.icon-btn{background:var(--s2);border:1px solid var(--b1);border-radius:8px;color:var(--t2);font-size:18px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s}
+.icon-btn{background:var(--s2);border:1px solid var(--b1);border-radius:8px;color:var(--t2);font-size:17px;width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s}
 .icon-btn:active{background:var(--s3)}
 
-/* ── TABS ── */
-.tabs{display:flex;padding:12px 16px 0;gap:4px;overflow-x:auto;scrollbar-width:none}
-.tabs::-webkit-scrollbar{display:none}
-.tab{flex-shrink:0;padding:8px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:none;background:var(--s2);color:var(--t2);transition:all .15s}
-.tab.active{background:var(--hi);color:#fff}
-
-/* ── CONTENT ── */
-.page{display:none;padding:16px}
+/* PAGES */
+.page{display:none;padding:14px 16px}
 .page.active{display:block}
 
-/* ── CARDS ── */
+/* CARDS */
 .card{background:var(--s1);border:1px solid var(--b1);border-radius:var(--r);padding:16px;margin-bottom:12px}
-.card-title{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);margin-bottom:12px}
+.card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--t3);margin-bottom:12px}
 
-/* ── AVERAGE RING ── */
-.avg-hero{text-align:center;padding:8px 0 16px}
-.ring-wrap{position:relative;width:140px;height:140px;margin:0 auto 12px}
+/* HERO RING */
+.avg-hero{text-align:center;padding:4px 0 16px}
+.ring-wrap{position:relative;width:140px;height:140px;margin:0 auto 10px}
 .ring-wrap svg{transform:rotate(-90deg)}
 .ring-bg{fill:none;stroke:var(--b1);stroke-width:10}
-.ring-fill{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset .6s ease,stroke .3s}
+.ring-fill{fill:none;stroke-width:10;stroke-linecap:round;transition:stroke-dashoffset .7s ease,stroke .3s}
 .ring-label{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
-.ring-pct{font-size:32px;font-weight:900;letter-spacing:-1px}
-.ring-sub{font-size:11px;color:var(--t2);margin-top:2px}
-.letter-grade{font-size:40px;font-weight:900;margin-bottom:4px}
-.avg-caption{font-size:13px;color:var(--t2)}
+.ring-pct{font-size:30px;font-weight:900;letter-spacing:-1px}
+.ring-sub{font-size:10px;color:var(--t2);margin-top:2px}
+.letter-grade{font-size:36px;font-weight:900;margin-bottom:2px}
+.avg-caption{font-size:12px;color:var(--t2)}
 
-/* ── STAT ROW ── */
-.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
-.stat{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r2);padding:12px;text-align:center}
-.stat-val{font-size:20px;font-weight:800}
-.stat-lbl{font-size:10px;color:var(--t2);margin-top:2px;font-weight:500;text-transform:uppercase;letter-spacing:.5px}
+/* STAT GRID */
+.stat-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:0}
+.stat{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r2);padding:11px;text-align:center}
+.stat-val{font-size:18px;font-weight:800}
+.stat-lbl{font-size:9px;color:var(--t2);margin-top:2px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
 
-/* ── SUBJECT LIST ── */
-.subject-item{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r2);padding:14px;margin-bottom:8px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:background .15s}
+/* RECRUITING BANNER */
+.recruit-bar{background:linear-gradient(135deg,rgba(155,109,255,.12),rgba(91,141,239,.08));border:1px solid rgba(155,109,255,.25);border-radius:var(--r);padding:12px 14px;margin-bottom:12px;display:flex;align-items:center;gap:12px}
+.recruit-icon{font-size:28px;flex-shrink:0}
+.recruit-info{flex:1}
+.recruit-title{font-size:13px;font-weight:700;color:var(--t1)}
+.recruit-sub{font-size:11px;color:var(--t2);margin-top:2px}
+.recruit-gpa{font-size:20px;font-weight:900;color:var(--purple);flex-shrink:0}
+
+/* SUBJECT LIST */
+.subject-item{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r2);padding:13px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:background .15s}
 .subject-item:active{background:var(--s3)}
 .subj-icon{width:38px;height:38px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0}
 .subj-info{flex:1;min-width:0}
 .subj-name{font-size:14px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.subj-detail{font-size:12px;color:var(--t2);margin-top:2px}
+.subj-detail{font-size:11px;color:var(--t2);margin-top:2px}
 .subj-grade{text-align:right;flex-shrink:0}
-.subj-pct{font-size:18px;font-weight:800}
-.subj-letter{font-size:11px;color:var(--t2);font-weight:600}
-.grade-bar{height:3px;border-radius:2px;background:var(--b1);margin-top:6px;overflow:hidden}
-.grade-bar-fill{height:100%;border-radius:2px;transition:width .4s ease}
+.subj-pct{font-size:17px;font-weight:800}
+.subj-letter{font-size:10px;color:var(--t2);font-weight:600}
+.grade-bar{height:3px;border-radius:2px;background:var(--b1);margin-top:5px;overflow:hidden}
+.grade-bar-fill{height:100%;border-radius:2px;transition:width .5s ease}
 
-/* ── EFFORT / STUDY ── */
-.effort-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-.effort-card{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r2);padding:14px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
-.effort-card.done{border-color:var(--success);background:rgba(48,196,138,.06)}
-.effort-card:active{background:var(--s3)}
-.effort-icon{font-size:24px;margin-bottom:6px}
-.effort-name{font-size:13px;font-weight:600}
-.effort-sub{font-size:11px;color:var(--t2);margin-top:2px}
-.effort-check{position:absolute;top:10px;right:10px;width:20px;height:20px;border-radius:50%;background:var(--b1);border:2px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .2s}
-.effort-card.done .effort-check{background:var(--success);border-color:var(--success);color:#fff}
+/* DAILY PLAN */
+.daily-plan{background:linear-gradient(135deg,rgba(91,141,239,.1),rgba(91,141,239,.03));border:1px solid rgba(91,141,239,.2);border-radius:var(--r);padding:14px;margin-bottom:12px}
+.daily-title{font-size:13px;font-weight:700;margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.daily-item{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid rgba(255,255,255,.04)}
+.daily-item:last-child{border-bottom:none}
+.daily-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.daily-text{font-size:12px;color:var(--t2);flex:1}
+.daily-val{font-size:12px;font-weight:700}
 
-/* ── STUDY TIMER ── */
-.timer-display{text-align:center;padding:16px 0}
-.timer-time{font-size:52px;font-weight:900;letter-spacing:-2px;font-variant-numeric:tabular-nums}
-.timer-label{font-size:12px;color:var(--t2);margin-top:4px}
-.timer-btns{display:flex;gap:8px;justify-content:center;margin-top:12px}
-.btn{padding:12px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .15s;font-family:var(--ff)}
-.btn-primary{background:var(--hi);color:#fff}
-.btn-primary:active{background:var(--hi2)}
-.btn-secondary{background:var(--s3);color:var(--t2)}
-.btn-secondary:active{background:var(--b1)}
-.btn-danger{background:rgba(224,80,80,.15);color:var(--danger);border:1px solid rgba(224,80,80,.3)}
-.btn-danger:active{background:rgba(224,80,80,.25)}
-.btn-success{background:var(--success);color:#fff}
-.btn-success:active{opacity:.85}
-.btn-full{width:100%}
-
-/* ── TODAY'S TASKS ── */
-.task-item{display:flex;align-items:flex-start;gap:10px;padding:12px 0;border-bottom:1px solid var(--b1)}
+/* TASKS */
+.task-item{display:flex;align-items:flex-start;gap:10px;padding:11px 0;border-bottom:1px solid var(--b1)}
 .task-item:last-child{border-bottom:none}
-.task-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--b2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:13px;transition:all .2s;margin-top:1px}
+.task-check{width:22px;height:22px;border-radius:6px;border:2px solid var(--b2);flex-shrink:0;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .2s;margin-top:1px}
 .task-check.checked{background:var(--success);border-color:var(--success);color:#fff}
 .task-info{flex:1}
-.task-name{font-size:14px;font-weight:500;transition:color .2s}
+.task-name{font-size:13px;font-weight:500;transition:color .2s;line-height:1.4}
 .task-name.done{color:var(--t3);text-decoration:line-through}
 .task-meta{font-size:11px;color:var(--t2);margin-top:2px}
-.task-pri{font-size:10px;padding:2px 7px;border-radius:4px;font-weight:700;flex-shrink:0;margin-top:3px}
+.task-pri{font-size:10px;padding:2px 6px;border-radius:4px;font-weight:700;flex-shrink:0;margin-top:2px}
 .pri-high{background:rgba(224,80,80,.15);color:var(--danger)}
 .pri-med{background:rgba(240,160,48,.15);color:var(--warn)}
 .pri-low{background:rgba(91,141,239,.15);color:var(--hi)}
 
-/* ── ADD FORMS ── */
-.form-field{margin-bottom:12px}
-.form-label{font-size:12px;font-weight:600;color:var(--t2);margin-bottom:6px;display:block}
-.form-input{width:100%;background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:12px 14px;color:var(--t1);font-size:15px;font-family:var(--ff);outline:none;transition:border-color .15s}
+/* EFFORT GRID */
+.effort-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.effort-card{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r2);padding:13px;cursor:pointer;transition:all .15s;position:relative;overflow:hidden}
+.effort-card.done{border-color:var(--success);background:rgba(48,196,138,.06)}
+.effort-card:active{background:var(--s3)}
+.effort-icon{font-size:22px;margin-bottom:5px}
+.effort-name{font-size:12px;font-weight:700}
+.effort-sub{font-size:10px;color:var(--t2);margin-top:2px;line-height:1.4}
+.effort-check{position:absolute;top:9px;right:9px;width:18px;height:18px;border-radius:50%;background:var(--b1);border:2px solid var(--b2);display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .2s}
+.effort-card.done .effort-check{background:var(--success);border-color:var(--success);color:#fff}
+
+/* SCIENCE TIP */
+.science-tip{background:var(--s2);border-left:3px solid var(--hi);border-radius:0 var(--r2) var(--r2) 0;padding:10px 12px;margin-bottom:8px}
+.science-tip-title{font-size:11px;font-weight:700;color:var(--hi);margin-bottom:3px}
+.science-tip-text{font-size:11px;color:var(--t2);line-height:1.5}
+
+/* TIMER */
+.timer-display{text-align:center;padding:14px 0}
+.timer-time{font-size:52px;font-weight:900;letter-spacing:-2px;font-variant-numeric:tabular-nums}
+.timer-label{font-size:12px;color:var(--t2);margin-top:4px}
+.timer-phase{font-size:11px;font-weight:700;color:var(--hi);margin-top:6px;text-transform:uppercase;letter-spacing:.6px}
+.timer-btns{display:flex;gap:8px;justify-content:center;margin-top:12px}
+
+/* HEALTH TRACK */
+.health-row{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:12px}
+.health-card{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r2);padding:12px;text-align:center;cursor:pointer;transition:all .15s}
+.health-card.on{border-color:var(--success);background:rgba(48,196,138,.06)}
+.health-card:active{background:var(--s3)}
+.health-icon{font-size:26px;margin-bottom:4px}
+.health-name{font-size:11px;font-weight:700}
+.health-val{font-size:18px;font-weight:900;margin-top:4px}
+.health-sub{font-size:9px;color:var(--t2);margin-top:2px}
+
+/* BUTTONS */
+.btn{padding:12px 22px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;border:none;transition:all .15s;font-family:var(--ff)}
+.btn-primary{background:var(--hi);color:#fff}
+.btn-primary:active{background:var(--hi2)}
+.btn-secondary{background:var(--s3);color:var(--t2)}
+.btn-secondary:active{background:var(--b1)}
+.btn-danger{background:rgba(224,80,80,.12);color:var(--danger);border:1px solid rgba(224,80,80,.25)}
+.btn-success{background:var(--success);color:#fff}
+.btn-full{width:100%}
+.btn-sm{padding:8px 14px;font-size:12px}
+
+/* FORMS */
+.form-field{margin-bottom:11px}
+.form-label{font-size:11px;font-weight:700;color:var(--t2);margin-bottom:5px;display:block;text-transform:uppercase;letter-spacing:.5px}
+.form-input{width:100%;background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:11px 13px;color:var(--t1);font-size:15px;font-family:var(--ff);outline:none;transition:border-color .15s}
 .form-input:focus{border-color:var(--hi)}
 .form-input::placeholder{color:var(--t3)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 select.form-input option{background:var(--s2)}
 
-/* ── STREAK / BADGES ── */
-.streak-display{display:flex;align-items:center;justify-content:center;gap:6px;padding:10px 0 4px;font-size:28px;font-weight:900}
-.streak-fire{font-size:32px}
-.streak-sub{text-align:center;font-size:12px;color:var(--t2);margin-bottom:12px}
-.badges-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
-.badge{background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:8px 12px;font-size:11px;font-weight:600;color:var(--t2);text-align:center}
-.badge.earned{border-color:var(--warn);color:var(--warn);background:rgba(240,160,48,.06)}
-.badge-icon{font-size:18px;display:block;margin-bottom:2px}
+/* CALCULATOR */
+.calc-result{background:var(--s2);border:1px solid var(--b1);border-radius:var(--r2);padding:14px;margin-top:10px}
+.calc-result-title{font-size:11px;font-weight:700;color:var(--t2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px}
+.calc-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:1px solid var(--b1)}
+.calc-row:last-child{border-bottom:none}
+.calc-label{font-size:12px;color:var(--t2)}
+.calc-val{font-size:14px;font-weight:800}
+.need-score{font-size:32px;font-weight:900;text-align:center;padding:12px 0 4px}
+.need-label{font-size:11px;color:var(--t2);text-align:center}
+.feasibility{text-align:center;margin-top:8px;padding:8px;border-radius:8px;font-size:12px;font-weight:700}
 
-/* ── WEEKLY CHART ── */
-.week-chart{display:flex;align-items:flex-end;gap:4px;height:80px;padding:0 4px}
-.week-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
-.week-bar{width:100%;border-radius:4px 4px 0 0;background:var(--b1);transition:height .4s ease,background .3s;min-height:4px}
+/* WEEK CHART */
+.week-chart{display:flex;align-items:flex-end;gap:4px;height:72px}
+.week-bar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px}
+.week-bar{width:100%;border-radius:4px 4px 0 0;background:var(--b1);transition:height .4s ease;min-height:3px}
 .week-bar.today{background:var(--hi)}
 .week-bar.good{background:var(--success)}
 .week-day{font-size:9px;color:var(--t3);font-weight:600;text-transform:uppercase}
-.week-val{font-size:9px;color:var(--t2);font-weight:600}
+.week-val{font-size:8px;color:var(--t2);font-weight:600}
 
-/* ── MODAL ── */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:200;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+/* STREAKS / BADGES */
+.streak-display{display:flex;align-items:center;justify-content:center;gap:6px;padding:8px 0 2px;font-size:30px;font-weight:900}
+.badges-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:10px}
+.badge{background:var(--s2);border:1px solid var(--b1);border-radius:8px;padding:7px 10px;font-size:10px;font-weight:700;color:var(--t3);text-align:center;min-width:70px}
+.badge.earned{border-color:var(--warn);color:var(--warn);background:rgba(240,160,48,.06)}
+.badge-icon{font-size:16px;display:block;margin-bottom:2px}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:200;align-items:flex-end;justify-content:center;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
 .modal-overlay.open{display:flex}
-.modal{background:var(--s1);border:1px solid var(--b1);border-radius:16px 16px 0 0;padding:20px;width:100%;max-height:85vh;overflow-y:auto;padding-bottom:calc(20px + env(safe-area-inset-bottom,0))}
+.modal{background:var(--s1);border:1px solid var(--b1);border-radius:18px 18px 0 0;padding:20px;width:100%;max-height:88vh;overflow-y:auto;padding-bottom:calc(20px + env(safe-area-inset-bottom,0))}
 .modal-handle{width:36px;height:4px;background:var(--b2);border-radius:2px;margin:0 auto 16px}
-.modal-title{font-size:17px;font-weight:700;margin-bottom:16px}
+.modal-title{font-size:17px;font-weight:800;margin-bottom:16px}
 
-/* ── BOTTOM NAV ── */
-.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(17,17,19,0.95);border-top:1px solid var(--b1);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0));z-index:100}
+/* BOTTOM NAV */
+.bottom-nav{position:fixed;bottom:0;left:0;right:0;background:rgba(17,17,19,0.96);border-top:1px solid var(--b1);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);display:flex;padding:8px 0 calc(8px + env(safe-area-inset-bottom,0));z-index:100}
 .bnav-item{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;padding:4px 0;transition:color .15s}
-.bnav-icon{font-size:22px;line-height:1}
-.bnav-label{font-size:10px;font-weight:600;color:var(--t3)}
+.bnav-icon{font-size:20px;line-height:1}
+.bnav-label{font-size:9px;font-weight:700;color:var(--t3);text-transform:uppercase;letter-spacing:.3px}
 .bnav-item.active .bnav-label{color:var(--hi)}
-.bnav-item.active .bnav-icon{filter:drop-shadow(0 0 6px var(--hi))}
+.bnav-item.active .bnav-icon{filter:drop-shadow(0 0 5px var(--hi))}
 
-/* ── MISC ── */
+/* MISC */
 .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-.section-title{font-size:15px;font-weight:700}
-.add-btn{background:var(--s2);border:1px solid var(--b1);border-radius:8px;color:var(--hi);font-size:20px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:background .15s}
+.section-title{font-size:15px;font-weight:800}
+.add-btn{background:var(--s2);border:1px solid var(--b1);border-radius:8px;color:var(--hi);font-size:20px;width:32px;height:32px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .add-btn:active{background:var(--s3)}
-.empty{text-align:center;padding:32px 16px;color:var(--t3);font-size:14px}
-.empty-icon{font-size:36px;margin-bottom:8px}
-.pill{display:inline-block;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:700}
+.empty{text-align:center;padding:28px 16px;color:var(--t3);font-size:13px}
+.empty-icon{font-size:32px;margin-bottom:8px}
+.pill{display:inline-block;padding:2px 7px;border-radius:5px;font-size:10px;font-weight:700}
 .pill-a{background:rgba(48,196,138,.15);color:var(--success)}
 .pill-b{background:rgba(91,141,239,.15);color:var(--hi)}
 .pill-c{background:rgba(240,160,48,.15);color:var(--warn)}
-.pill-d{background:rgba(224,80,80,.15);color:var(--danger)}
-.pill-f{background:rgba(224,80,80,.3);color:var(--danger)}
+.pill-d,.pill-f{background:rgba(224,80,80,.15);color:var(--danger)}
 .divider{height:1px;background:var(--b1);margin:12px 0}
-.toast{position:fixed;top:calc(70px + env(safe-area-inset-top,0));left:50%;transform:translateX(-50%) translateY(-20px);background:var(--s3);border:1px solid var(--b2);border-radius:10px;padding:10px 18px;font-size:13px;font-weight:600;z-index:300;opacity:0;transition:all .3s;pointer-events:none;white-space:nowrap}
+.toast{position:fixed;top:calc(68px + env(safe-area-inset-top,0));left:50%;transform:translateX(-50%) translateY(-16px);background:var(--s3);border:1px solid var(--b2);border-radius:10px;padding:9px 16px;font-size:13px;font-weight:600;z-index:300;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap;max-width:90vw}
 .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-.motivation{background:linear-gradient(135deg,rgba(91,141,239,.1),rgba(91,141,239,.03));border:1px solid rgba(91,141,239,.2);border-radius:var(--r);padding:14px 16px;margin-bottom:12px}
+.motivation{background:linear-gradient(135deg,rgba(155,109,255,.08),rgba(91,141,239,.04));border:1px solid rgba(155,109,255,.2);border-radius:var(--r);padding:13px 15px;margin-bottom:12px}
 .motivation-text{font-size:13px;font-weight:500;color:var(--t1);line-height:1.5}
-.motivation-author{font-size:11px;color:var(--t2);margin-top:6px}
+.motivation-author{font-size:10px;color:var(--t2);margin-top:5px}
+.tag{display:inline-block;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:700;background:var(--s3);color:var(--t2);margin:2px}
+.progress-label{display:flex;justify-content:space-between;font-size:11px;color:var(--t2);margin-bottom:4px}
 </style>
 </head>
 <body>
 
-<!-- NAV -->
 <div class="nav">
-  <div class="nav-logo">Grade<span>Up</span></div>
-  <div class="nav-actions">
-    <div class="icon-btn" onclick="openSettings()" title="Settings">⚙️</div>
+  <div class="nav-logo">Grade<span>Up</span> ⚾</div>
+  <div style="display:flex;gap:8px">
+    <div class="icon-btn" onclick="openSettings()">⚙️</div>
   </div>
 </div>
 
-<!-- TOAST -->
 <div class="toast" id="toast"></div>
 
-<!-- ── PAGE: DASHBOARD ── -->
+<!-- ════════════════════════════════
+     PAGE: HOME
+════════════════════════════════ -->
 <div class="page active" id="page-dash">
 
   <div class="motivation" id="motivationCard">
-    <div class="motivation-text" id="motivationText">Loading motivation...</div>
+    <div class="motivation-text" id="motivationText">Loading...</div>
     <div class="motivation-author" id="motivationAuthor"></div>
   </div>
 
-  <!-- Average ring -->
+  <!-- Recruiting target -->
+  <div class="recruit-bar" id="recruitBar">
+    <div class="recruit-icon">⚾</div>
+    <div class="recruit-info">
+      <div class="recruit-title">Baseball Recruiting GPA</div>
+      <div class="recruit-sub" id="recruitSub">D1 needs ~3.0 · D2 needs ~2.5</div>
+    </div>
+    <div class="recruit-gpa" id="recruitGpa">—</div>
+  </div>
+
+  <!-- Overall ring -->
   <div class="card">
     <div class="avg-hero">
       <div class="ring-wrap">
@@ -224,37 +259,33 @@ select.form-input option{background:var(--s2)}
         </svg>
         <div class="ring-label">
           <div class="ring-pct" id="avgPct">—</div>
-          <div class="ring-sub">Overall</div>
+          <div class="ring-sub">Average</div>
         </div>
       </div>
       <div class="letter-grade" id="letterGrade">—</div>
-      <div class="avg-caption" id="avgCaption">Add your first subject to get started</div>
+      <div class="avg-caption" id="avgCaption">Add your first subject</div>
     </div>
-
     <div class="stat-row">
-      <div class="stat">
-        <div class="stat-val" id="statSubjects">0</div>
-        <div class="stat-lbl">Subjects</div>
-      </div>
-      <div class="stat">
-        <div class="stat-val" id="statTasks">0</div>
-        <div class="stat-lbl">Done Today</div>
-      </div>
-      <div class="stat">
-        <div class="stat-val" id="statStreak">0🔥</div>
-        <div class="stat-lbl">Day Streak</div>
-      </div>
+      <div class="stat"><div class="stat-val" id="statSubjects">0</div><div class="stat-lbl">Subjects</div></div>
+      <div class="stat"><div class="stat-val" id="statTasks">0</div><div class="stat-lbl">Done Today</div></div>
+      <div class="stat"><div class="stat-val" id="statStreak">0🔥</div><div class="stat-lbl">Streak</div></div>
     </div>
   </div>
 
-  <!-- Weekly effort chart -->
-  <div class="card">
-    <div class="card-title">This Week — Study Hours</div>
-    <div class="week-chart" id="weekChart"></div>
-    <div style="margin-top:10px;text-align:center;font-size:12px;color:var(--t2)" id="weekTotal"></div>
+  <!-- Daily action plan -->
+  <div class="card" id="dailyPlanCard">
+    <div class="card-title">📋 Your Daily Action Plan</div>
+    <div id="dailyPlanList"></div>
   </div>
 
-  <!-- Quick subjects preview -->
+  <!-- Week chart -->
+  <div class="card">
+    <div class="card-title">📈 This Week — Study Hours</div>
+    <div class="week-chart" id="weekChart"></div>
+    <div style="margin-top:8px;text-align:center;font-size:11px;color:var(--t2)" id="weekTotal"></div>
+  </div>
+
+  <!-- Subject preview -->
   <div class="section-header">
     <div class="section-title">Subjects</div>
     <div class="add-btn" onclick="openAddSubject()">＋</div>
@@ -262,49 +293,123 @@ select.form-input option{background:var(--s2)}
   <div id="dashSubjects"></div>
 </div>
 
-<!-- ── PAGE: SUBJECTS ── -->
+<!-- ════════════════════════════════
+     PAGE: GRADES
+════════════════════════════════ -->
 <div class="page" id="page-subjects">
   <div class="section-header">
-    <div class="section-title">All Subjects</div>
+    <div class="section-title">Subjects & Grades</div>
     <div class="add-btn" onclick="openAddSubject()">＋</div>
   </div>
   <div id="subjectsList"></div>
+
+  <!-- What do I need calculator -->
+  <div class="card" style="margin-top:16px">
+    <div class="card-title">🎯 Grade Calculator — What Do I Need?</div>
+    <div class="form-field">
+      <label class="form-label">Subject</label>
+      <select class="form-input" id="calcSubject" onchange="runCalc()"></select>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label class="form-label">Assignments left</label>
+        <input class="form-input" type="number" id="calcAssignLeft" placeholder="8" min="1" oninput="runCalc()"/>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Tests left</label>
+        <input class="form-input" type="number" id="calcTestsLeft" placeholder="2" min="0" oninput="runCalc()"/>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-field">
+        <label class="form-label">Assignment weight %</label>
+        <input class="form-input" type="number" id="calcAssignWeight" placeholder="40" min="0" max="100" oninput="runCalc()"/>
+      </div>
+      <div class="form-field">
+        <label class="form-label">Test weight %</label>
+        <input class="form-input" type="number" id="calcTestWeight" placeholder="60" min="0" max="100" oninput="runCalc()"/>
+      </div>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Weeks until end of term</label>
+      <input class="form-input" type="number" id="calcWeeks" placeholder="8" min="1" oninput="runCalc()"/>
+    </div>
+    <div id="calcResult"></div>
+  </div>
 </div>
 
-<!-- ── PAGE: TASKS ── -->
+<!-- ════════════════════════════════
+     PAGE: TASKS
+════════════════════════════════ -->
 <div class="page" id="page-tasks">
   <div class="section-header">
-    <div class="section-title">Today's Homework</div>
+    <div class="section-title">Today's Work</div>
     <div class="add-btn" onclick="openAddTask()">＋</div>
   </div>
-  <div class="card" id="taskListCard">
+  <div class="card">
     <div id="taskList"></div>
   </div>
 
-  <div class="divider" style="margin-top:16px"></div>
-  <div class="section-header">
+  <div class="section-header" style="margin-top:4px">
     <div class="section-title">Effort Checklist</div>
   </div>
+  <div style="margin-bottom:10px">
+    <div class="science-tip">
+      <div class="science-tip-title">🔬 Science says</div>
+      <div class="science-tip-text">Active recall beats re-reading by <strong>2x</strong>. Spaced repetition improves retention by <strong>200-300%</strong>. Check off what you actually did.</div>
+    </div>
+  </div>
   <div class="effort-grid" id="effortGrid"></div>
+
+  <!-- Health tracking -->
+  <div class="card">
+    <div class="card-title">💪 Health = Performance</div>
+    <div class="science-tip" style="margin-bottom:10px">
+      <div class="science-tip-title">🔬 Science says</div>
+      <div class="science-tip-text">Sleep &lt;8hrs tanks working memory. Exercise raises BDNF for learning. Log this daily — it matters as much as study time.</div>
+    </div>
+    <div class="health-row" id="healthRow"></div>
+  </div>
 </div>
 
-<!-- ── PAGE: STUDY ── -->
+<!-- ════════════════════════════════
+     PAGE: STUDY
+════════════════════════════════ -->
 <div class="page" id="page-study">
+
+  <!-- Spaced repetition reminder -->
   <div class="card">
-    <div class="card-title">Study Timer</div>
+    <div class="card-title">🧠 Review Queue — Active Recall</div>
+    <div class="science-tip" style="margin-bottom:10px">
+      <div class="science-tip-title">🔬 Spaced Repetition</div>
+      <div class="science-tip-text">Review subjects at intervals: after 1 day, 3 days, 1 week, 2 weeks. This moves info from short-term to long-term memory (+200% retention).</div>
+    </div>
+    <div id="reviewQueue"></div>
+  </div>
+
+  <!-- Pomodoro timer -->
+  <div class="card">
+    <div class="card-title">⏱️ Focus Timer</div>
+    <div class="science-tip" style="margin-bottom:8px">
+      <div class="science-tip-title">🔬 25-min blocks</div>
+      <div class="science-tip-text">Focus 8.5/10 vs 6.2/10 with breaks. Phone away during session — no exceptions.</div>
+    </div>
     <div class="timer-display">
       <div class="timer-time" id="timerDisplay">25:00</div>
-      <div class="timer-label" id="timerLabel">Focus session</div>
+      <div class="timer-phase" id="timerPhase">FOCUS</div>
+      <div class="timer-label" id="timerLabel">25 min study · 5 min break</div>
     </div>
     <div class="timer-btns">
       <button class="btn btn-primary" id="timerStartBtn" onclick="timerToggle()">Start</button>
       <button class="btn btn-secondary" onclick="timerReset()">Reset</button>
     </div>
     <div style="margin-top:12px;display:flex;gap:6px;justify-content:center;flex-wrap:wrap" id="timerPresets"></div>
+    <div style="margin-top:10px;text-align:center;font-size:11px;color:var(--t2)" id="pomodoroCount"></div>
   </div>
 
+  <!-- Log session -->
   <div class="card">
-    <div class="card-title">Log Study Session</div>
+    <div class="card-title">📝 Log Study Session</div>
     <div class="form-field">
       <label class="form-label">Subject</label>
       <select class="form-input" id="logSubjectSel"></select>
@@ -319,58 +424,56 @@ select.form-input option{background:var(--s2)}
         <input class="form-input" type="number" id="logEffort" placeholder="8" min="1" max="10"/>
       </div>
     </div>
+    <div class="form-field">
+      <label class="form-label">Study method used</label>
+      <select class="form-input" id="logMethod">
+        <option value="recall">🧠 Active Recall (testing yourself)</option>
+        <option value="spaced">📅 Spaced Repetition (flashcards)</option>
+        <option value="pomodoro">⏱️ Pomodoro (timed blocks)</option>
+        <option value="practice">✏️ Practice Problems</option>
+        <option value="reread">📖 Re-reading / Notes</option>
+      </select>
+    </div>
     <button class="btn btn-success btn-full" onclick="logSession()">Log Session ✓</button>
   </div>
 
+  <!-- Streaks & badges -->
   <div class="card">
-    <div class="card-title">Streaks & Badges</div>
-    <div class="streak-display">
-      <span class="streak-fire">🔥</span>
-      <span id="streakBig">0</span>
-    </div>
-    <div class="streak-sub" id="streakText">Study every day to build your streak!</div>
+    <div class="card-title">🏆 Streaks & Badges</div>
+    <div class="streak-display"><span>🔥</span><span id="streakBig">0</span></div>
+    <div style="text-align:center;font-size:11px;color:var(--t2);margin-bottom:4px" id="streakText">Study every day to build your streak</div>
     <div class="badges-row" id="badgesRow"></div>
   </div>
 </div>
 
-<!-- ── PAGE: STATS ── -->
+<!-- ════════════════════════════════
+     PAGE: STATS
+════════════════════════════════ -->
 <div class="page" id="page-stats">
   <div class="card">
-    <div class="card-title">Grade Overview</div>
+    <div class="card-title">📊 Grade Breakdown</div>
     <div id="statsSubjects"></div>
   </div>
 
   <div class="card">
-    <div class="card-title">Study Sessions Log</div>
+    <div class="card-title">⚾ Recruiting Snapshot</div>
+    <div id="recruitSnapshot"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">📚 Study Method Breakdown</div>
+    <div id="methodStats"></div>
+  </div>
+
+  <div class="card">
+    <div class="card-title">🕐 Recent Sessions</div>
     <div id="sessionLog"></div>
   </div>
 </div>
 
-<!-- ── BOTTOM NAV ── -->
-<div class="bottom-nav">
-  <div class="bnav-item active" onclick="switchPage('dash',this)">
-    <div class="bnav-icon">🏠</div>
-    <div class="bnav-label">Home</div>
-  </div>
-  <div class="bnav-item" onclick="switchPage('subjects',this)">
-    <div class="bnav-icon">📚</div>
-    <div class="bnav-label">Grades</div>
-  </div>
-  <div class="bnav-item" onclick="switchPage('tasks',this)">
-    <div class="bnav-icon">✅</div>
-    <div class="bnav-label">Tasks</div>
-  </div>
-  <div class="bnav-item" onclick="switchPage('study',this)">
-    <div class="bnav-icon">⏱️</div>
-    <div class="bnav-label">Study</div>
-  </div>
-  <div class="bnav-item" onclick="switchPage('stats',this)">
-    <div class="bnav-icon">📊</div>
-    <div class="bnav-label">Stats</div>
-  </div>
-</div>
-
-<!-- ── MODALS ── -->
+<!-- ════════════
+     MODALS
+════════════ -->
 
 <!-- Add Subject -->
 <div class="modal-overlay" id="modalAddSubject" onclick="closeModalOutside(event,'modalAddSubject')">
@@ -379,20 +482,30 @@ select.form-input option{background:var(--s2)}
     <div class="modal-title">Add Subject</div>
     <div class="form-field">
       <label class="form-label">Subject Name</label>
-      <input class="form-input" id="newSubjName" placeholder="e.g. Math, English..." maxlength="40"/>
+      <input class="form-input" id="newSubjName" placeholder="Math, English, Science..." maxlength="40"/>
     </div>
     <div class="form-row">
       <div class="form-field">
         <label class="form-label">Current Grade %</label>
-        <input class="form-input" type="number" id="newSubjGrade" placeholder="75" min="0" max="100"/>
+        <input class="form-input" type="number" id="newSubjGrade" placeholder="72" min="0" max="100"/>
       </div>
       <div class="form-field">
-        <label class="form-label">Target Grade %</label>
+        <label class="form-label">Target %</label>
         <input class="form-input" type="number" id="newSubjTarget" placeholder="85" min="0" max="100"/>
       </div>
     </div>
     <div class="form-field">
-      <label class="form-label">Emoji Icon</label>
+      <label class="form-label">Difficulty (1=easy, 5=hard)</label>
+      <select class="form-input" id="newSubjDifficulty">
+        <option value="1">1 — Easy</option>
+        <option value="2">2 — Manageable</option>
+        <option value="3" selected>3 — Medium</option>
+        <option value="4">4 — Hard</option>
+        <option value="5">5 — Killer</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Icon</label>
       <div style="display:flex;gap:8px;flex-wrap:wrap" id="emojiPicker"></div>
     </div>
     <button class="btn btn-primary btn-full" onclick="saveSubject()">Add Subject</button>
@@ -403,10 +516,10 @@ select.form-input option{background:var(--s2)}
 <div class="modal-overlay" id="modalAddTask" onclick="closeModalOutside(event,'modalAddTask')">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">Add Homework Task</div>
+    <div class="modal-title">Add Task</div>
     <div class="form-field">
       <label class="form-label">Task</label>
-      <input class="form-input" id="newTaskName" placeholder="e.g. Chapter 5 questions..." maxlength="80"/>
+      <input class="form-input" id="newTaskName" placeholder="Chapter 5 questions..." maxlength="80"/>
     </div>
     <div class="form-row">
       <div class="form-field">
@@ -423,7 +536,16 @@ select.form-input option{background:var(--s2)}
       </div>
     </div>
     <div class="form-field">
-      <label class="form-label">Due</label>
+      <label class="form-label">Type</label>
+      <select class="form-input" id="newTaskType">
+        <option value="homework">📝 Homework</option>
+        <option value="test">📋 Test / Exam</option>
+        <option value="project">🗂️ Project</option>
+        <option value="review">🔁 Review / Study</option>
+      </select>
+    </div>
+    <div class="form-field">
+      <label class="form-label">Due Date</label>
       <input class="form-input" type="date" id="newTaskDue"/>
     </div>
     <button class="btn btn-primary btn-full" onclick="saveTask()">Add Task</button>
@@ -449,362 +571,520 @@ select.form-input option{background:var(--s2)}
       <input class="form-input" id="settingName" placeholder="Your name"/>
     </div>
     <div class="form-field">
-      <label class="form-label">Grading System</label>
-      <select class="form-input" id="settingSystem">
-        <option value="percent">Percentage (0-100%)</option>
-        <option value="gpa">GPA (0.0-4.0)</option>
+      <label class="form-label">Baseball Goal</label>
+      <select class="form-input" id="settingGoal">
+        <option value="d1">D1 College Baseball (need ~3.0 GPA)</option>
+        <option value="d2">D2 College Baseball (need ~2.5 GPA)</option>
+        <option value="d3">D3 College Baseball (need ~2.0 GPA)</option>
+        <option value="juco">JUCO Baseball</option>
       </select>
     </div>
     <div class="form-field">
-      <label class="form-label">Target GPA / Average</label>
-      <input class="form-input" type="number" id="settingTarget" placeholder="80" min="0" max="100"/>
+      <label class="form-label">Study hours goal per day</label>
+      <input class="form-input" type="number" id="settingHours" placeholder="2" min="0.5" max="8" step="0.5"/>
     </div>
     <button class="btn btn-primary btn-full" onclick="saveSettings()" style="margin-bottom:10px">Save Settings</button>
     <button class="btn btn-danger btn-full" onclick="clearData()">Reset All Data</button>
   </div>
 </div>
 
+<!-- BOTTOM NAV -->
+<div class="bottom-nav">
+  <div class="bnav-item active" onclick="switchPage('dash',this)">
+    <div class="bnav-icon">🏠</div><div class="bnav-label">Home</div>
+  </div>
+  <div class="bnav-item" onclick="switchPage('subjects',this)">
+    <div class="bnav-icon">📚</div><div class="bnav-label">Grades</div>
+  </div>
+  <div class="bnav-item" onclick="switchPage('tasks',this)">
+    <div class="bnav-icon">✅</div><div class="bnav-label">Tasks</div>
+  </div>
+  <div class="bnav-item" onclick="switchPage('study',this)">
+    <div class="bnav-icon">⏱️</div><div class="bnav-label">Study</div>
+  </div>
+  <div class="bnav-item" onclick="switchPage('stats',this)">
+    <div class="bnav-icon">📊</div><div class="bnav-label">Stats</div>
+  </div>
+</div>
+
 <script>
 // ── STORAGE ──
-const LS = {
-  get(k){try{return JSON.parse(localStorage.getItem('gu_'+k))||null}catch{return null}},
-  set(k,v){try{localStorage.setItem('gu_'+k,JSON.stringify(v))}catch{}}
-};
+const LS={get(k){try{return JSON.parse(localStorage.getItem('gu2_'+k))||null}catch{return null}},set(k,v){try{localStorage.setItem('gu2_'+k,JSON.stringify(v))}catch{}}};
 
 // ── STATE ──
-let subjects = LS.get('subjects') || [];
-let tasks = LS.get('tasks') || [];
-let sessions = LS.get('sessions') || [];
-let effortLog = LS.get('effortLog') || {};
-let settings = LS.get('settings') || {name:'',system:'percent',target:80};
-let streak = LS.get('streak') || {count:0,lastDate:''};
+let subjects=LS.get('subjects')||[];
+let tasks=LS.get('tasks')||[];
+let sessions=LS.get('sessions')||[];
+let effortLog=LS.get('effortLog')||{};
+let healthLog=LS.get('healthLog')||{};
+let settings=LS.get('settings')||{name:'',goal:'d1',hours:2};
+let streak=LS.get('streak')||{count:0,lastDate:''};
+let pomodorosDone=LS.get('pomodorosDone')||0;
 
-// ── SAVE ──
-function save(){
-  LS.set('subjects',subjects);
-  LS.set('tasks',tasks);
-  LS.set('sessions',sessions);
-  LS.set('effortLog',effortLog);
-  LS.set('settings',settings);
-  LS.set('streak',streak);
-}
+function save(){LS.set('subjects',subjects);LS.set('tasks',tasks);LS.set('sessions',sessions);LS.set('effortLog',effortLog);LS.set('healthLog',healthLog);LS.set('settings',settings);LS.set('streak',streak);LS.set('pomodorosDone',pomodorosDone);}
 
-// ── EMOJI OPTIONS ──
-const EMOJIS = ['📐','📝','🔬','🌍','📖','🎨','💻','🎵','🏋️','⚽','🧪','🧮','🗣️','📜','🎭'];
-let selectedEmoji = '📚';
+// ── EMOJIS ──
+const EMOJIS=['📐','📝','🔬','🌍','📖','🎨','💻','🎵','🧪','🧮','🗣️','📜','🎭','⚡','🌿','🏛️','🔢','🌐'];
+let selectedEmoji='📚';
 
 // ── GRADE HELPERS ──
-function gradeColor(pct){
-  if(pct>=80) return 'var(--success)';
-  if(pct>=70) return 'var(--hi)';
-  if(pct>=60) return 'var(--warn)';
-  return 'var(--danger)';
+function gradeColor(p){return p>=80?'var(--success)':p>=70?'var(--hi)':p>=60?'var(--warn)':'var(--danger)'}
+function letterGrade(p){
+  if(p>=93)return'A';if(p>=90)return'A-';if(p>=87)return'B+';if(p>=83)return'B';
+  if(p>=80)return'B-';if(p>=77)return'C+';if(p>=73)return'C';if(p>=70)return'C-';
+  if(p>=67)return'D+';if(p>=60)return'D';return'F';
 }
-function letterGrade(pct){
-  if(pct>=90) return 'A+';
-  if(pct>=85) return 'A';
-  if(pct>=80) return 'A-';
-  if(pct>=75) return 'B+';
-  if(pct>=70) return 'B';
-  if(pct>=65) return 'B-';
-  if(pct>=60) return 'C+';
-  if(pct>=55) return 'C';
-  if(pct>=50) return 'C-';
-  if(pct>=40) return 'D';
-  return 'F';
-}
-function letterClass(l){
-  if(l.startsWith('A')) return 'pill-a';
-  if(l.startsWith('B')) return 'pill-b';
-  if(l.startsWith('C')) return 'pill-c';
-  if(l.startsWith('D')) return 'pill-d';
-  return 'pill-f';
-}
+function letterClass(l){if(l.startsWith('A'))return'pill-a';if(l.startsWith('B'))return'pill-b';if(l.startsWith('C'))return'pill-c';return'pill-d'}
+function pctToGPA(p){if(p>=93)return 4.0;if(p>=90)return 3.7;if(p>=87)return 3.3;if(p>=83)return 3.0;if(p>=80)return 2.7;if(p>=77)return 2.3;if(p>=73)return 2.0;if(p>=70)return 1.7;if(p>=67)return 1.3;if(p>=60)return 1.0;return 0.0;}
+function calcAvg(){if(!subjects.length)return null;return subjects.reduce((a,s)=>a+parseFloat(s.grade),0)/subjects.length;}
+function calcGPA(){const a=calcAvg();return a===null?null:pctToGPA(a);}
+function today(){return fmtISO(new Date());}
+function fmtISO(d){return d.toISOString().slice(0,10);}
+function fmtDate(str){if(!str)return'';const d=new Date(str+'T12:00:00');return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});}
+function uid(){return Math.random().toString(36).slice(2,10);}
+function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
+function daysSince(dateStr){if(!dateStr)return 999;return Math.floor((new Date()-new Date(dateStr+'T12:00:00'))/(1000*60*60*24));}
 
-// ── MOTIVATIONS ──
-const QUOTES = [
-  {text:"Baseball is 90% mental. The other half is physical.",author:"Yogi Berra"},
-  {text:"You don't have to be great to start, but you have to start to be great.",author:"Zig Ziglar"},
-  {text:"The harder you work for something, the greater you'll feel when you achieve it.",author:"Unknown"},
-  {text:"Small progress is still progress. Show up every day.",author:"Unknown"},
-  {text:"Your future self is watching you right now through your memories.",author:"Unknown"},
-  {text:"Champions keep playing until they get it right.",author:"Billie Jean King"},
-  {text:"Do the work in the classroom so you can do the work on the field.",author:"Unknown"},
-  {text:"Discipline is the bridge between goals and accomplishment.",author:"Jim Rohn"},
-  {text:"Every pro was once an amateur. Every expert was once a beginner.",author:"Robin Sharma"},
-  {text:"Don't watch the clock. Do what it does. Keep going.",author:"Sam Levenson"},
+// ── RECRUITING ──
+const RECRUIT_TARGETS={d1:{gpa:3.0,label:'D1 target: 3.0 GPA'},d2:{gpa:2.5,label:'D2 target: 2.5 GPA'},d3:{gpa:2.0,label:'D3 target: 2.0 GPA'},juco:{gpa:2.0,label:'JUCO target: 2.0 GPA'}};
+
+// ── MOTIVATIONS (baseball + school) ──
+const QUOTES=[
+  {text:"Baseball and school are the same game — reps, consistency, and showing up when it's hard.",author:""},
+  {text:"The work you put in the classroom shows coaches you can handle pressure.",author:""},
+  {text:"Every practice rep, every homework problem — it's all the same discipline.",author:""},
+  {text:"Spaced repetition: review today, review in 3 days, review in a week. That's how pros learn anything.",author:"Science"},
+  {text:"You don't rise to the level of your goals. You fall to the level of your systems.",author:"James Clear"},
+  {text:"Champions keep playing until they get it right. Same with studying.",author:"Billie Jean King"},
+  {text:"Sleep 8+ hours tonight. It's the single highest-ROI thing you can do for tomorrow's performance.",author:"Sleep science"},
+  {text:"Active recall > re-reading. Close the notes and test yourself. 2x better retention.",author:"Cognitive science"},
+  {text:"D1 coaches look at your GPA. It tells them if you can handle the workload. Make it count.",author:""},
+  {text:"Cramming is like swinging at pitches you haven't seen. Spaced practice is batting practice every day.",author:""},
 ];
+
 function loadMotivation(){
-  const q = QUOTES[Math.floor(Math.random()*QUOTES.length)];
-  document.getElementById('motivationText').textContent = `"${q.text}"`;
-  document.getElementById('motivationAuthor').textContent = `— ${q.author}`;
+  const q=QUOTES[Math.floor(Math.random()*QUOTES.length)];
+  document.getElementById('motivationText').textContent=`"${q.text}"`;
+  document.getElementById('motivationAuthor').textContent=q.author?`— ${q.author}`:'';
 }
 
-// ── OVERALL AVG ──
-function calcAvg(){
-  if(!subjects.length) return null;
-  return subjects.reduce((a,s)=>a+parseFloat(s.grade),0)/subjects.length;
+// ── DAILY ACTION PLAN ──
+function buildDailyPlan(){
+  const plans=[];
+  const avg=calcAvg();
+  const todayKey=today();
+  const health=healthLog[todayKey]||{};
+  const effort=effortLog[todayKey]||{};
+  const todaySessions=sessions.filter(s=>s.date===todayKey);
+  const studyMinToday=todaySessions.reduce((a,s)=>a+s.minutes,0);
+  const goalMins=(settings.hours||2)*60;
+
+  // Study time
+  const studyLeft=Math.max(0,goalMins-studyMinToday);
+  if(studyLeft>0){
+    plans.push({color:'var(--hi)',text:`Study ${Math.round(studyLeft)} more minutes today`,val:`${Math.round(studyMinToday)}/${goalMins}m`});
+  } else {
+    plans.push({color:'var(--success)',text:'Daily study goal hit! 🔥',val:'Done'});
+  }
+
+  // Worst subject
+  if(subjects.length){
+    const worst=subjects.slice().sort((a,b)=>a.grade-b.grade)[0];
+    if(worst.grade<worst.target){
+      plans.push({color:'var(--danger)',text:`Focus on ${worst.name} — you're ${Math.round(worst.target-worst.grade)}% below target`,val:`${worst.grade}%`});
+    }
+  }
+
+  // Sleep
+  if(!health.sleep){
+    plans.push({color:'var(--warn)',text:'Log your sleep — 8+ hrs = better grades & reaction time',val:'⚠️ Not logged'});
+  } else if(health.sleepHours<8){
+    plans.push({color:'var(--warn)',text:`You slept ${health.sleepHours}hrs — aim for 8+`,val:'😴'});
+  }
+
+  // Active recall
+  if(!effort.recall){
+    plans.push({color:'var(--purple)',text:'Do active recall today — test yourself, don\'t just re-read',val:'+2x retention'});
+  }
+
+  // Spaced repetition due
+  const dueReview=getReviewDue();
+  if(dueReview.length){
+    plans.push({color:'var(--hi)',text:`Review due: ${dueReview.map(s=>s.name).join(', ')}`,val:`${dueReview.length} subj`});
+  }
+
+  // Pending high priority tasks
+  const urgent=tasks.filter(t=>!t.done&&t.priority==='high');
+  if(urgent.length){
+    plans.push({color:'var(--danger)',text:`${urgent.length} high-priority task${urgent.length>1?'s':''} pending`,val:'🔴 Now'});
+  }
+
+  const el=document.getElementById('dailyPlanList');
+  if(!plans.length){el.innerHTML='<div style="text-align:center;color:var(--success);font-size:13px;padding:8px">All good — you\'re locked in today 🔥</div>';return;}
+  el.innerHTML=plans.map(p=>`<div class="daily-item">
+    <div class="daily-dot" style="background:${p.color}"></div>
+    <div class="daily-text">${p.text}</div>
+    <div class="daily-val" style="color:${p.color}">${p.val}</div>
+  </div>`).join('');
+}
+
+// ── SPACED REPETITION DUE ──
+// Intervals: 1 day, 3 days, 7 days, 14 days after last session
+function getReviewDue(){
+  if(!subjects.length)return[];
+  const INTERVALS=[1,3,7,14];
+  return subjects.filter(s=>{
+    const subjSessions=sessions.filter(ss=>ss.subjectId===s.id);
+    if(!subjSessions.length)return false;
+    const last=subjSessions[subjSessions.length-1].date;
+    const days=daysSince(last);
+    return INTERVALS.some(i=>days>=i) && daysSince(last)>0;
+  });
 }
 
 // ── RENDER DASHBOARD ──
 function renderDash(){
-  const avg = calcAvg();
-  const pct = avg!==null ? Math.round(avg) : null;
-  document.getElementById('avgPct').textContent = pct!==null ? pct+'%' : '—';
-  const letter = pct!==null ? letterGrade(pct) : '—';
-  const lg = document.getElementById('letterGrade');
-  lg.textContent = letter;
-  lg.style.color = pct!==null ? gradeColor(pct) : 'var(--t3)';
+  loadMotivation();
+  const avg=calcAvg();
+  const pct=avg!==null?Math.round(avg):null;
+  const gpa=calcGPA();
 
-  // Ring
-  const ring = document.getElementById('ringFill');
-  const circ = 377;
+  document.getElementById('avgPct').textContent=pct!==null?pct+'%':'—';
+  const letter=pct!==null?letterGrade(pct):'—';
+  const lg=document.getElementById('letterGrade');
+  lg.textContent=letter;
+  lg.style.color=pct!==null?gradeColor(pct):'var(--t3)';
+
+  const ring=document.getElementById('ringFill');
   if(pct!==null){
-    const offset = circ - (circ*(pct/100));
-    ring.style.strokeDashoffset = offset;
-    ring.style.stroke = gradeColor(pct);
+    ring.style.strokeDashoffset=377-(377*(pct/100));
+    ring.style.stroke=gradeColor(pct);
   }
 
-  document.getElementById('avgCaption').textContent = pct!==null
-    ? (pct>=80 ? 'Keep it up! You\'re on track 🔥' : pct>=60 ? 'Getting there — stay consistent!' : 'Time to lock in. You got this.')
-    : 'Add your first subject to get started';
+  document.getElementById('avgCaption').textContent=pct!==null
+    ?(pct>=85?'Killing it — stay consistent 🔥':pct>=70?'Getting there. Lock in on the hard subjects.':'Below target. Use active recall. Review daily.')
+    :'Add subjects to see your average';
+
+  // Recruiting
+  const rt=RECRUIT_TARGETS[settings.goal||'d1'];
+  const gpaStr=gpa!==null?gpa.toFixed(1)+'':'—';
+  document.getElementById('recruitGpa').textContent=gpaStr;
+  document.getElementById('recruitGpa').style.color=gpa===null?'var(--t3)':gpa>=rt.gpa?'var(--success)':'var(--danger)';
+  document.getElementById('recruitSub').textContent=rt.label+(gpa!==null?(gpa>=rt.gpa?' ✅ On track':' ⚠️ Need to improve'):'');
 
   // Stats
-  document.getElementById('statSubjects').textContent = subjects.length;
-  const todayDone = tasks.filter(t=>t.done && t.doneDate===today()).length;
-  document.getElementById('statTasks').textContent = todayDone;
-  document.getElementById('statStreak').textContent = streak.count+'🔥';
+  document.getElementById('statSubjects').textContent=subjects.length;
+  document.getElementById('statTasks').textContent=tasks.filter(t=>t.done&&t.doneDate===today()).length;
+  document.getElementById('statStreak').textContent=streak.count+'🔥';
 
   // Subjects preview
-  const el = document.getElementById('dashSubjects');
-  if(!subjects.length){
-    el.innerHTML='<div class="empty"><div class="empty-icon">📚</div>No subjects yet — add one!</div>';
-  } else {
-    el.innerHTML = subjects.map(s=>subjectHTML(s)).join('');
-  }
+  const el=document.getElementById('dashSubjects');
+  el.innerHTML=subjects.length?subjects.slice().sort((a,b)=>a.grade-b.grade).map(s=>subjectHTML(s)).join('')
+    :'<div class="empty"><div class="empty-icon">📚</div>No subjects yet — add one!</div>';
 
-  // Week chart
+  buildDailyPlan();
   renderWeekChart();
 }
 
 function subjectHTML(s){
-  const color = gradeColor(s.grade);
-  const letter = letterGrade(s.grade);
-  const lc = letterClass(letter);
-  const barW = Math.min(100,Math.max(0,s.grade));
-  return `<div class="subject-item" onclick="openSubjectDetail('${s.id}')">
+  const color=gradeColor(s.grade);
+  const letter=letterGrade(s.grade);
+  const lc=letterClass(letter);
+  return`<div class="subject-item" onclick="openSubjectDetail('${s.id}')">
     <div class="subj-icon" style="background:${color}22">${s.emoji||'📚'}</div>
     <div class="subj-info">
       <div class="subj-name">${esc(s.name)}</div>
-      <div class="subj-detail">Target: ${s.target}% &nbsp;·&nbsp; <span class="pill ${lc}">${letter}</span></div>
-      <div class="grade-bar"><div class="grade-bar-fill" style="width:${barW}%;background:${color}"></div></div>
+      <div class="subj-detail">Target ${s.target}% &nbsp;·&nbsp; <span class="pill ${lc}">${letter}</span>${s.grade<s.target?` &nbsp;·&nbsp; <span style="color:var(--danger);font-size:10px">-${Math.round(s.target-s.grade)}%</span>`:''}</div>
+      <div class="grade-bar"><div class="grade-bar-fill" style="width:${Math.min(100,s.grade)}%;background:${color}"></div></div>
     </div>
     <div class="subj-grade">
       <div class="subj-pct" style="color:${color}">${s.grade}%</div>
-      <div class="subj-letter">${s.grade>=s.target ? '✅ On target' : '⚠️ Below target'}</div>
+      <div class="subj-letter">${s.grade>=s.target?'✅':'⚠️'}</div>
     </div>
   </div>`;
 }
 
-// ── WEEKLY CHART ──
+// ── WEEK CHART ──
 function renderWeekChart(){
   const days=['Mon','Tue','Wed','Thu','Fri','Sat','Sun'];
   const now=new Date();
-  const todayIdx=now.getDay()==0?6:now.getDay()-1;
+  const todayIdx=now.getDay()===0?6:now.getDay()-1;
   const weekMins=Array(7).fill(0);
   sessions.forEach(s=>{
-    const d=new Date(s.date);
+    const d=new Date(s.date+'T12:00:00');
     const diff=Math.floor((now-d)/(1000*60*60*24));
-    if(diff>=0&&diff<7){
-      const idx=d.getDay()==0?6:d.getDay()-1;
-      weekMins[idx]+=s.minutes||0;
-    }
+    if(diff>=0&&diff<7){const idx=d.getDay()===0?6:d.getDay()-1;weekMins[idx]+=s.minutes||0;}
   });
-  const maxM=Math.max(...weekMins,30);
+  const maxM=Math.max(...weekMins,60);
   const total=weekMins.reduce((a,b)=>a+b,0);
-  const el=document.getElementById('weekChart');
-  el.innerHTML=days.map((d,i)=>{
-    const h=Math.round((weekMins[i]/maxM)*68)+4;
-    const cls=i===todayIdx?'today':weekMins[i]>30?'good':'';
-    return `<div class="week-bar-wrap">
-      <div class="week-val">${weekMins[i]?Math.round(weekMins[i]/60*10)/10:'·'}</div>
+  const goalMins=(settings.hours||2)*60;
+  document.getElementById('weekChart').innerHTML=days.map((d,i)=>{
+    const h=Math.round((weekMins[i]/maxM)*64)+4;
+    const cls=i===todayIdx?'today':weekMins[i]>=goalMins?'good':'';
+    return`<div class="week-bar-wrap">
+      <div class="week-val">${weekMins[i]?Math.round(weekMins[i]/6)/10:'·'}</div>
       <div class="week-bar ${cls}" style="height:${h}px"></div>
       <div class="week-day">${d}</div>
     </div>`;
   }).join('');
-  document.getElementById('weekTotal').textContent=`Total this week: ${Math.round(total/60*10)/10} hrs`;
+  document.getElementById('weekTotal').textContent=`${Math.round(total/6)/10} hrs this week · Goal: ${settings.hours||2} hrs/day`;
 }
 
 // ── RENDER SUBJECTS ──
 function renderSubjects(){
-  const el=document.getElementById('subjectsList');
-  if(!subjects.length){
-    el.innerHTML='<div class="empty"><div class="empty-icon">📚</div>No subjects yet</div>';
-    return;
-  }
-  el.innerHTML=subjects.map(s=>subjectHTML(s)).join('');
+  document.getElementById('subjectsList').innerHTML=subjects.length
+    ?subjects.slice().sort((a,b)=>a.grade-b.grade).map(s=>subjectHTML(s)).join('')
+    :'<div class="empty"><div class="empty-icon">📚</div>No subjects yet</div>';
+
+  const sel=document.getElementById('calcSubject');
+  sel.innerHTML=subjects.map(s=>`<option value="${s.id}">${s.emoji} ${esc(s.name)} (${s.grade}%)</option>`).join('')||'<option>Add subjects first</option>';
+  runCalc();
 }
 
-// ── RENDER TASKS ──
+// ── GRADE CALCULATOR ──
+function runCalc(){
+  const subjId=document.getElementById('calcSubject').value;
+  const subj=subjects.find(s=>s.id===subjId);
+  const assignLeft=parseInt(document.getElementById('calcAssignLeft').value)||0;
+  const testsLeft=parseInt(document.getElementById('calcTestsLeft').value)||0;
+  const assignWeight=parseFloat(document.getElementById('calcAssignWeight').value)||40;
+  const testWeight=parseFloat(document.getElementById('calcTestWeight').value)||60;
+  const weeks=parseInt(document.getElementById('calcWeeks').value)||8;
+  const el=document.getElementById('calcResult');
+
+  if(!subj||(!assignLeft&&!testsLeft)){el.innerHTML='';return;}
+
+  const current=subj.grade;
+  const target=subj.target;
+  const gap=target-current;
+  const totalItems=assignLeft+testsLeft;
+  const daysLeft=weeks*7;
+  const studyDaysLeft=Math.round(daysLeft*5/7); // school days
+
+  // Simple model: what avg score needed on remaining work to hit target
+  // Assume current grade = 50% of total weight already done
+  // Remaining 50% = remaining assignments + tests
+  const currentWeight=50; // % already graded
+  const remainingWeight=50;
+  const neededOnRemaining=((target*100)-(current*currentWeight))/remainingWeight;
+  const neededClamped=Math.min(105,Math.max(0,neededOnRemaining));
+
+  // Daily study time needed
+  const hoursPerWeek=gap>15?3:gap>5?2:1;
+
+  let feasibility,feasColor,feasBg;
+  if(neededClamped<=85){feasibility='Very achievable 💪';feasColor='var(--success)';feasBg='rgba(48,196,138,.1)';}
+  else if(neededClamped<=92){feasibility='Doable — lock in now ⚡';feasColor='var(--warn)';feasBg='rgba(240,160,48,.1)';}
+  else if(neededClamped<=100){feasibility='Tough but possible — max effort 🔥';feasColor='var(--warn)';feasBg='rgba(240,160,48,.1)';}
+  else{feasibility='Very hard — reassess target or get help 😤';feasColor='var(--danger)';feasBg='rgba(224,80,80,.1)';}
+
+  const studyMinsPerDay=Math.round(hoursPerWeek*60/5);
+  const reviewInterval=gap>10?'Every day':gap>5?'Every 2 days':'Every 3 days';
+
+  el.innerHTML=`<div class="calc-result">
+    <div class="need-score" style="color:${gradeColor(neededClamped)}">${Math.round(neededClamped)}%</div>
+    <div class="need-label">avg score needed on remaining work</div>
+    <div class="feasibility" style="color:${feasColor};background:${feasBg}">${feasibility}</div>
+    <div style="margin-top:12px">
+      <div class="calc-row"><span class="calc-label">Current grade</span><span class="calc-val" style="color:${gradeColor(current)}">${current}%</span></div>
+      <div class="calc-row"><span class="calc-label">Target grade</span><span class="calc-val">${target}%</span></div>
+      <div class="calc-row"><span class="calc-label">Gap to close</span><span class="calc-val" style="color:${gap>0?'var(--danger)':'var(--success)'}">${gap>0?'+'+Math.round(gap):'On target ✅'}</span></div>
+      <div class="calc-row"><span class="calc-label">Weeks left</span><span class="calc-val">${weeks} wks (${daysLeft} days)</span></div>
+      <div class="calc-row"><span class="calc-label">Items left</span><span class="calc-val">${assignLeft} assign + ${testsLeft} tests</span></div>
+      <div class="calc-row"><span class="calc-label">Study daily</span><span class="calc-val" style="color:var(--hi)">${studyMinsPerDay} min on ${esc(subj.name)}</span></div>
+      <div class="calc-row"><span class="calc-label">Review schedule</span><span class="calc-val">${reviewInterval}</span></div>
+      <div class="calc-row"><span class="calc-label">Method to use</span><span class="calc-val" style="color:var(--purple)">Active recall 🧠</span></div>
+    </div>
+  </div>`;
+}
+
+// ── EFFORT ITEMS ──
 const EFFORT_ITEMS=[
-  {id:'notes',icon:'📓',name:'Wrote Notes',sub:'In class or while studying'},
-  {id:'review',icon:'🔁',name:'Reviewed Material',sub:'Went over today\'s content'},
-  {id:'practice',icon:'✏️',name:'Practice Problems',sub:'Did extra practice'},
-  {id:'noPhone',icon:'📵',name:'Phone-Free Study',sub:'No distractions for 30+ min'},
-  {id:'asked',icon:'🙋',name:'Asked for Help',sub:'Teacher, tutor, or online'},
-  {id:'planned',icon:'📅',name:'Planned Tomorrow',sub:'Set goals for next session'},
+  {id:'recall',icon:'🧠',name:'Active Recall',sub:'Tested yourself — no peeking at notes'},
+  {id:'spaced',icon:'📅',name:'Spaced Review',sub:'Reviewed old material on schedule'},
+  {id:'pomodoro',icon:'⏱️',name:'Timed Focus',sub:'25+ min with phone away'},
+  {id:'practice',icon:'✏️',name:'Practice Problems',sub:'Worked through problems, not just read'},
+  {id:'noPhone',icon:'📵',name:'Phone-Free',sub:'30+ min zero phone during study'},
+  {id:'asked',icon:'🙋',name:'Got Help',sub:'Asked teacher, tutor, or looked it up right'},
+  {id:'planned',icon:'📅',name:'Planned Tomorrow',sub:'Know exactly what to study next'},
+  {id:'notes',icon:'📓',name:'Organized Notes',sub:'Notes clear enough to study from'},
+];
+
+// ── HEALTH ITEMS ──
+const HEALTH_ITEMS=[
+  {id:'sleep',icon:'😴',name:'Sleep',unit:'hrs',default:8},
+  {id:'exercise',icon:'🏋️',name:'Exercise',unit:'min',default:0},
+  {id:'meals',icon:'🥗',name:'Ate Well',unit:'',default:0,toggle:true},
 ];
 
 function renderTasks(){
-  const el=document.getElementById('taskList');
   const todayTasks=tasks.filter(t=>!t.done||t.doneDate===today());
+  const pending=todayTasks.filter(t=>!t.done).sort((a,b)=>{const o={high:0,med:1,low:2};return o[a.priority]-o[b.priority];});
+  const done=todayTasks.filter(t=>t.done);
+  const el=document.getElementById('taskList');
   if(!todayTasks.length){
-    el.innerHTML='<div class="empty"><div class="empty-icon">✅</div>All caught up! Add tasks for today.</div>';
+    el.innerHTML='<div class="empty"><div class="empty-icon">✅</div>No tasks — add homework!</div>';
   } else {
-    const pending=todayTasks.filter(t=>!t.done);
-    const done=todayTasks.filter(t=>t.done);
-    const all=[...pending,...done];
-    el.innerHTML=all.map(t=>taskHTML(t)).join('');
+    el.innerHTML=[...pending,...done].map(t=>taskHTML(t)).join('');
   }
+
   // Effort
-  const todayKey=today();
-  const log=effortLog[todayKey]||{};
+  const k=today();
+  const log=effortLog[k]||{};
   document.getElementById('effortGrid').innerHTML=EFFORT_ITEMS.map(e=>{
-    const done=!!log[e.id];
-    return `<div class="effort-card ${done?'done':''}" onclick="toggleEffort('${e.id}')">
-      <div class="effort-check">${done?'✓':''}</div>
+    const d=!!log[e.id];
+    return`<div class="effort-card ${d?'done':''}" onclick="toggleEffort('${e.id}')">
+      <div class="effort-check">${d?'✓':''}</div>
       <div class="effort-icon">${e.icon}</div>
       <div class="effort-name">${e.name}</div>
       <div class="effort-sub">${e.sub}</div>
     </div>`;
   }).join('');
+
+  // Health
+  const health=healthLog[k]||{};
+  document.getElementById('healthRow').innerHTML=HEALTH_ITEMS.map(h=>{
+    if(h.toggle){
+      const on=!!health[h.id];
+      return`<div class="health-card ${on?'on':''}" onclick="toggleHealth('${h.id}')">
+        <div class="health-icon">${h.icon}</div>
+        <div class="health-name">${h.name}</div>
+        <div class="health-val">${on?'✅':'—'}</div>
+        <div class="health-sub">Tap to log</div>
+      </div>`;
+    }
+    const val=health[h.id]||0;
+    const good=h.id==='sleep'?val>=8:h.id==='exercise'?val>=30:false;
+    return`<div class="health-card ${good?'on':''}" onclick="promptHealth('${h.id}','${h.name}','${h.unit}')">
+      <div class="health-icon">${h.icon}</div>
+      <div class="health-name">${h.name}</div>
+      <div class="health-val" style="color:${val?gradeColor(good?90:60):'var(--t3)'}">${val||'—'}</div>
+      <div class="health-sub">${h.unit}${h.id==='sleep'?' (8+ = 🔥)':h.id==='exercise'?' (30+ = 🔥)':''}</div>
+    </div>`;
+  }).join('');
 }
 
 function taskHTML(t){
-  const priClass={high:'pri-high',med:'pri-med',low:'pri-low'};
+  const pc={high:'pri-high',med:'pri-med',low:'pri-low'};
   const subj=subjects.find(s=>s.id===t.subjectId);
-  return `<div class="task-item">
+  const typeIcon={homework:'📝',test:'📋',project:'🗂️',review:'🔁'}[t.type]||'📝';
+  return`<div class="task-item">
     <div class="task-check ${t.done?'checked':''}" onclick="toggleTask('${t.id}')">${t.done?'✓':''}</div>
     <div class="task-info">
-      <div class="task-name ${t.done?'done':''}">${esc(t.name)}</div>
+      <div class="task-name ${t.done?'done':''}">${typeIcon} ${esc(t.name)}</div>
       <div class="task-meta">${subj?subj.emoji+' '+subj.name:'No subject'}${t.due?' · Due '+fmtDate(t.due):''}</div>
     </div>
-    <div>
-      <div class="task-pri ${priClass[t.priority]||'pri-med'}">${t.priority?.toUpperCase()||'MED'}</div>
-    </div>
+    <div class="task-pri ${pc[t.priority]||'pri-med'}">${t.priority?.toUpperCase()||'MED'}</div>
   </div>`;
 }
 
 function toggleTask(id){
-  const t=tasks.find(t=>t.id===id);
-  if(!t) return;
-  t.done=!t.done;
-  t.doneDate=t.done?today():'';
-  save();
-  renderTasks();
-  renderDash();
-  if(t.done) toast('Task done! 💪');
+  const t=tasks.find(t=>t.id===id);if(!t)return;
+  t.done=!t.done;t.doneDate=t.done?today():'';
+  save();renderTasks();renderDash();
+  if(t.done)toast('Done! 💪');
 }
 
 function toggleEffort(id){
-  const k=today();
-  if(!effortLog[k]) effortLog[k]={};
+  const k=today();if(!effortLog[k])effortLog[k]={};
   effortLog[k][id]=!effortLog[k][id];
-  save();
-  updateStreak();
-  renderTasks();
-  renderDash();
+  save();updateStreak();renderTasks();buildDailyPlan();
+}
+
+function toggleHealth(id){
+  const k=today();if(!healthLog[k])healthLog[k]={};
+  healthLog[k][id]=!healthLog[k][id];
+  save();renderTasks();buildDailyPlan();
+}
+
+function promptHealth(id,name,unit){
+  const val=prompt(`How many ${unit} of ${name} today?`);
+  if(val===null)return;
+  const n=parseFloat(val);if(isNaN(n))return;
+  const k=today();if(!healthLog[k])healthLog[k]={};
+  healthLog[k][id]=n;
+  save();renderTasks();buildDailyPlan();
+  toast(`${name} logged: ${n}${unit} ${n>=8&&id==='sleep'?'🔥':n>=30&&id==='exercise'?'🔥':''}`);
 }
 
 // ── STREAK ──
 function updateStreak(){
   const t=today();
   const k=effortLog[t]||{};
-  const anyDone=Object.values(k).some(Boolean);
-  if(anyDone){
-    if(streak.lastDate===t) return;
-    const yesterday=new Date();yesterday.setDate(yesterday.getDate()-1);
-    const yStr=fmtISO(yesterday);
-    if(streak.lastDate===yStr||!streak.lastDate){
-      streak.count++;
-    } else if(streak.lastDate!==t){
-      streak.count=1;
-    }
-    streak.lastDate=t;
-    save();
-  }
+  if(!Object.values(k).some(Boolean))return;
+  if(streak.lastDate===t)return;
+  const yest=new Date();yest.setDate(yest.getDate()-1);
+  const yStr=fmtISO(yest);
+  streak.count=streak.lastDate===yStr||!streak.lastDate?streak.count+1:1;
+  streak.lastDate=t;save();
 }
 
-// ── RENDER STUDY ──
+// ── REVIEW QUEUE ──
 function renderStudy(){
   const sel=document.getElementById('logSubjectSel');
-  sel.innerHTML=subjects.map(s=>`<option value="${s.id}">${s.emoji} ${esc(s.name)}</option>`).join('')||'<option value="">No subjects yet</option>';
+  sel.innerHTML=subjects.map(s=>`<option value="${s.id}">${s.emoji} ${esc(s.name)}</option>`).join('')||'<option value="">Add subjects first</option>';
+
+  // Review queue
+  const INTERVALS=[1,3,7,14];
+  const el=document.getElementById('reviewQueue');
+  if(!subjects.length){el.innerHTML='<div class="empty">Add subjects to see review schedule</div>';return;}
+  const items=subjects.map(s=>{
+    const ss=sessions.filter(x=>x.subjectId===s.id);
+    const last=ss.length?ss[ss.length-1].date:null;
+    const days=last?daysSince(last):999;
+    const nextInterval=INTERVALS.find(i=>days<i)||14;
+    const daysUntilNext=last?Math.max(0,nextInterval-days):0;
+    const due=daysUntilNext===0;
+    return{s,due,days,daysUntilNext,last};
+  }).sort((a,b)=>a.daysUntilNext-b.daysUntilNext);
+
+  el.innerHTML=items.map(({s,due,days,daysUntilNext,last})=>`
+    <div class="task-item">
+      <div style="font-size:22px">${s.emoji}</div>
+      <div class="task-info">
+        <div class="task-name" style="${due?'color:var(--warn)':''}">${esc(s.name)} ${due?'⚠️ Due for review':''}</div>
+        <div class="task-meta">${last?`Last studied ${days}d ago`:'Never studied'} · Next review: ${daysUntilNext===0?'Now!':daysUntilNext+'d'}</div>
+      </div>
+      <div style="font-size:11px;font-weight:700;color:${due?'var(--warn)':'var(--t3)'}">${due?'REVIEW':'in '+daysUntilNext+'d'}</div>
+    </div>`).join('');
+
   document.getElementById('streakBig').textContent=streak.count;
   document.getElementById('streakText').textContent=streak.count
-    ? `${streak.count} day${streak.count>1?'s':''} in a row! Keep showing up.`
-    : 'Log study or effort to start your streak!';
+    ?`${streak.count} day${streak.count>1?'s':''} in a row — keep going!`:'Study daily to build your streak';
   renderBadges();
+  updatePomodoroCount();
 }
 
+// ── BADGES ──
 const BADGES=[
   {id:'first',icon:'🌟',name:'First Session',cond:()=>sessions.length>=1},
   {id:'week',icon:'📅',name:'7-Day Streak',cond:()=>streak.count>=7},
-  {id:'hour',icon:'⏰',name:'1 Hour Study',cond:()=>sessions.some(s=>s.minutes>=60)},
-  {id:'tenSessions',icon:'🏆',name:'10 Sessions',cond:()=>sessions.length>=10},
-  {id:'allEffort',icon:'💯',name:'Full Effort Day',cond:()=>{const k=effortLog[today()]||{};return EFFORT_ITEMS.every(e=>k[e.id])}},
-  {id:'aGrade',icon:'🎓',name:'A Average',cond:()=>{const a=calcAvg();return a!==null&&a>=85}},
+  {id:'hour',icon:'⏰',name:'1hr Session',cond:()=>sessions.some(s=>s.minutes>=60)},
+  {id:'ten',icon:'🏆',name:'10 Sessions',cond:()=>sessions.length>=10},
+  {id:'recall',icon:'🧠',name:'Recall Master',cond:()=>sessions.filter(s=>s.method==='recall').length>=5},
+  {id:'aGrade',icon:'🎓',name:'A Average',cond:()=>{const a=calcAvg();return a!==null&&a>=85;}},
+  {id:'d1gpa',icon:'⚾',name:'D1 GPA',cond:()=>{const g=calcGPA();return g!==null&&g>=3.0;}},
+  {id:'allEffort',icon:'💯',name:'Full Effort Day',cond:()=>{const k=effortLog[today()]||{};return EFFORT_ITEMS.every(e=>k[e.id]);}},
 ];
 
 function renderBadges(){
   document.getElementById('badgesRow').innerHTML=BADGES.map(b=>{
-    const earned=b.cond();
-    return `<div class="badge ${earned?'earned':''}"><span class="badge-icon">${earned?b.icon:'🔒'}</span>${b.name}</div>`;
-  }).join('');
-}
-
-// ── RENDER STATS ──
-function renderStats(){
-  const el=document.getElementById('statsSubjects');
-  if(!subjects.length){el.innerHTML='<div class="empty">No subjects yet</div>';} else {
-    el.innerHTML=subjects.map(s=>{
-      const color=gradeColor(s.grade);
-      const letter=letterGrade(s.grade);
-      const gap=s.grade-s.target;
-      return `<div style="margin-bottom:12px">
-        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
-          <div style="font-size:14px;font-weight:600">${s.emoji} ${esc(s.name)}</div>
-          <div style="font-size:16px;font-weight:800;color:${color}">${s.grade}% <span style="font-size:12px">${letter}</span></div>
-        </div>
-        <div class="grade-bar" style="height:6px"><div class="grade-bar-fill" style="width:${Math.min(100,s.grade)}%;background:${color}"></div></div>
-        <div style="font-size:11px;color:var(--t2);margin-top:4px">Target: ${s.target}% &nbsp; ${gap>=0?'✅ +'+gap+'% above target':'⚠️ '+Math.abs(gap)+'% below target'}</div>
-      </div>`;
-    }).join('<div class="divider"></div>');
-  }
-
-  const log=document.getElementById('sessionLog');
-  if(!sessions.length){log.innerHTML='<div class="empty">No sessions logged yet</div>';return;}
-  const recent=[...sessions].reverse().slice(0,15);
-  log.innerHTML=recent.map(s=>{
-    const subj=subjects.find(sub=>sub.id===s.subjectId);
-    return `<div class="task-item">
-      <div style="font-size:22px">${subj?subj.emoji:'📚'}</div>
-      <div class="task-info">
-        <div class="task-name">${subj?esc(subj.name):'General'}</div>
-        <div class="task-meta">${s.minutes} min · Effort ${s.effort}/10 · ${fmtDate(s.date)}</div>
-      </div>
-      <div style="font-size:12px;color:var(--t2)">${s.minutes>=60?'🌟':s.minutes>=30?'👍':'📝'}</div>
-    </div>`;
+    const e=b.cond();
+    return`<div class="badge ${e?'earned':''}"><span class="badge-icon">${e?b.icon:'🔒'}</span>${b.name}</div>`;
   }).join('');
 }
 
 // ── TIMER ──
-let timerInterval=null, timerSeconds=25*60, timerRunning=false;
+let timerInterval=null,timerSeconds=25*60,timerRunning=false,isBreak=false,pomCycle=0;
 const PRESETS=[{l:'5m',s:300},{l:'25m',s:1500},{l:'45m',s:2700},{l:'60m',s:3600}];
+
+function updatePomodoroCount(){
+  document.getElementById('pomodoroCount').textContent=pomodorosDone?`${pomodorosDone} Pomodoros completed today 🍅`:'Start your first focus session!';
+}
 
 function renderTimerPresets(){
   document.getElementById('timerPresets').innerHTML=PRESETS.map(p=>
-    `<button class="btn btn-secondary" style="padding:8px 14px;font-size:12px" onclick="setTimer(${p.s})">${p.l}</button>`
-  ).join('');
+    `<button class="btn btn-secondary btn-sm" onclick="setTimer(${p.s})">${p.l}</button>`).join('');
 }
 function setTimer(s){timerReset();timerSeconds=s;updateTimerDisplay();}
 function updateTimerDisplay(){
@@ -819,21 +1099,32 @@ function timerToggle(){
     timerRunning=true;
     document.getElementById('timerStartBtn').textContent='Pause';
     timerInterval=setInterval(()=>{
-      timerSeconds--;
-      updateTimerDisplay();
+      timerSeconds--;updateTimerDisplay();
       if(timerSeconds<=0){
         clearInterval(timerInterval);timerRunning=false;
-        document.getElementById('timerStartBtn').textContent='Start';
-        document.getElementById('timerLabel').textContent='Session complete! 🎉';
-        toast('Timer done! Great work 🔥');
+        if(!isBreak){
+          pomodorosDone++;save();
+          updatePomodoroCount();
+          toast('Focus done! Take a 5-min break 🍅');
+          isBreak=true;timerSeconds=5*60;
+          document.getElementById('timerPhase').textContent='BREAK';
+          document.getElementById('timerStartBtn').textContent='Start Break';
+        } else {
+          isBreak=false;timerSeconds=25*60;
+          document.getElementById('timerPhase').textContent='FOCUS';
+          document.getElementById('timerStartBtn').textContent='Start Focus';
+          toast('Break over — back to work 💪');
+        }
+        updateTimerDisplay();
       }
     },1000);
   }
 }
 function timerReset(){
-  clearInterval(timerInterval);timerRunning=false;timerSeconds=25*60;
+  clearInterval(timerInterval);timerRunning=false;isBreak=false;timerSeconds=25*60;
   document.getElementById('timerStartBtn').textContent='Start';
-  document.getElementById('timerLabel').textContent='Focus session';
+  document.getElementById('timerPhase').textContent='FOCUS';
+  document.getElementById('timerLabel').textContent='25 min study · 5 min break';
   updateTimerDisplay();
 }
 
@@ -842,16 +1133,15 @@ function logSession(){
   const subjectId=document.getElementById('logSubjectSel').value;
   const minutes=parseInt(document.getElementById('logMinutes').value);
   const effort=parseInt(document.getElementById('logEffort').value);
-  if(!minutes||minutes<1) return toast('Enter minutes studied');
-  if(!effort||effort<1||effort>10) return toast('Effort must be 1-10');
-  sessions.push({id:uid(),subjectId,minutes,effort,date:today()});
+  const method=document.getElementById('logMethod').value;
+  if(!minutes||minutes<1)return toast('Enter minutes studied');
+  if(!effort||effort<1||effort>10)return toast('Effort 1-10');
+  sessions.push({id:uid(),subjectId,minutes,effort,method,date:today()});
   document.getElementById('logMinutes').value='';
   document.getElementById('logEffort').value='';
-  save();
-  updateStreak();
-  renderStudy();
-  renderDash();
-  toast('Session logged! 💪');
+  save();updateStreak();renderStudy();renderDash();
+  const methodMsg={recall:'Active recall — that\'s the best method 🧠',spaced:'Spaced rep — building long-term memory 📅',pomodoro:'Pomodoro — focused and efficient ⏱️',practice:'Practice problems — the grind 💪',reread:'Tip: try active recall next time for 2x retention'}[method]||'Session logged!';
+  toast(methodMsg);
 }
 
 // ── ADD SUBJECT ──
@@ -859,9 +1149,9 @@ function openAddSubject(){
   selectedEmoji='📚';
   document.getElementById('newSubjName').value='';
   document.getElementById('newSubjGrade').value='';
-  document.getElementById('newSubjTarget').value='80';
-  const ep=document.getElementById('emojiPicker');
-  ep.innerHTML=EMOJIS.map(e=>`<div onclick="selectEmoji('${e}',this)" style="font-size:26px;padding:4px;cursor:pointer;border-radius:6px;border:2px solid ${e===selectedEmoji?'var(--hi)':'transparent'}">${e}</div>`).join('');
+  document.getElementById('newSubjTarget').value='85';
+  document.getElementById('emojiPicker').innerHTML=EMOJIS.map(e=>
+    `<div onclick="selectEmoji('${e}',this)" style="font-size:24px;padding:5px;cursor:pointer;border-radius:6px;border:2px solid ${e===selectedEmoji?'var(--hi)':'transparent'}">${e}</div>`).join('');
   document.getElementById('modalAddSubject').classList.add('open');
   setTimeout(()=>document.getElementById('newSubjName').focus(),100);
 }
@@ -873,22 +1163,20 @@ function selectEmoji(e,el){
 function saveSubject(){
   const name=document.getElementById('newSubjName').value.trim();
   const grade=parseFloat(document.getElementById('newSubjGrade').value);
-  const target=parseFloat(document.getElementById('newSubjTarget').value)||80;
-  if(!name) return toast('Enter a subject name');
-  if(isNaN(grade)||grade<0||grade>100) return toast('Enter a valid grade (0-100)');
-  subjects.push({id:uid(),name,grade,target,emoji:selectedEmoji,history:[{date:today(),grade}]});
-  save();
-  document.getElementById('modalAddSubject').classList.remove('open');
-  renderAll();
-  toast('Subject added! 📚');
+  const target=parseFloat(document.getElementById('newSubjTarget').value)||85;
+  const difficulty=parseInt(document.getElementById('newSubjDifficulty').value)||3;
+  if(!name)return toast('Enter a subject name');
+  if(isNaN(grade)||grade<0||grade>100)return toast('Enter a valid grade 0-100');
+  subjects.push({id:uid(),name,grade,target,difficulty,emoji:selectedEmoji,added:today(),history:[{date:today(),grade}]});
+  save();document.getElementById('modalAddSubject').classList.remove('open');
+  renderAll();toast('Subject added 📚');
 }
 
 // ── ADD TASK ──
 function openAddTask(){
   document.getElementById('newTaskName').value='';
   document.getElementById('newTaskDue').value='';
-  const sel=document.getElementById('newTaskSubject');
-  sel.innerHTML=subjects.map(s=>`<option value="${s.id}">${s.emoji} ${esc(s.name)}</option>`).join('')||'<option value="">No subjects</option>';
+  document.getElementById('newTaskSubject').innerHTML=subjects.map(s=>`<option value="${s.id}">${s.emoji} ${esc(s.name)}</option>`).join('')||'<option value="">Add subjects first</option>';
   document.getElementById('modalAddTask').classList.add('open');
   setTimeout(()=>document.getElementById('newTaskName').focus(),100);
 }
@@ -896,86 +1184,146 @@ function saveTask(){
   const name=document.getElementById('newTaskName').value.trim();
   const subjectId=document.getElementById('newTaskSubject').value;
   const priority=document.getElementById('newTaskPriority').value;
+  const type=document.getElementById('newTaskType').value;
   const due=document.getElementById('newTaskDue').value;
-  if(!name) return toast('Enter a task name');
-  tasks.push({id:uid(),name,subjectId,priority,due,done:false,doneDate:'',created:today()});
-  save();
-  document.getElementById('modalAddTask').classList.remove('open');
-  renderTasks();
-  renderDash();
-  toast('Task added! ✅');
+  if(!name)return toast('Enter a task name');
+  tasks.push({id:uid(),name,subjectId,priority,type,due,done:false,doneDate:'',created:today()});
+  save();document.getElementById('modalAddTask').classList.remove('open');
+  renderTasks();renderDash();toast('Task added ✅');
 }
 
 // ── SUBJECT DETAIL ──
 function openSubjectDetail(id){
-  const s=subjects.find(s=>s.id===id);
-  if(!s) return;
+  const s=subjects.find(s=>s.id===id);if(!s)return;
   document.getElementById('detailTitle').textContent=`${s.emoji} ${s.name}`;
   const color=gradeColor(s.grade);
   const letter=letterGrade(s.grade);
+  const gpa=pctToGPA(s.grade);
   const gap=s.grade-s.target;
+  const ss=sessions.filter(x=>x.subjectId===s.id);
+  const totalMins=ss.reduce((a,x)=>a+x.minutes,0);
   document.getElementById('detailBody').innerHTML=`
-    <div style="text-align:center;padding:12px 0 20px">
-      <div style="font-size:52px;font-weight:900;color:${color}">${s.grade}%</div>
-      <div style="font-size:18px;font-weight:700;color:${color}">${letter}</div>
-      <div style="font-size:12px;color:var(--t2);margin-top:6px">Target: ${s.target}% &nbsp; ${gap>=0?'✅ On track':'⚠️ Need +'+Math.abs(gap)+'%'}</div>
+    <div style="text-align:center;padding:10px 0 18px">
+      <div style="font-size:48px;font-weight:900;color:${color}">${s.grade}%</div>
+      <div style="font-size:20px;font-weight:700;color:${color}">${letter} &nbsp; GPA: ${gpa.toFixed(1)}</div>
+      <div style="font-size:11px;color:var(--t2);margin-top:5px">Target: ${s.target}% &nbsp; ${gap>=0?'✅ On track':'⚠️ Need +'+Math.abs(Math.round(gap))+'%'}</div>
     </div>
-    <div class="grade-bar" style="height:8px;margin-bottom:16px">
-      <div class="grade-bar-fill" style="width:${Math.min(100,s.grade)}%;background:${color}"></div>
+    <div class="grade-bar" style="height:8px;margin-bottom:14px"><div class="grade-bar-fill" style="width:${Math.min(100,s.grade)}%;background:${color}"></div></div>
+    <div style="display:flex;gap:8px;margin-bottom:14px">
+      <div class="stat" style="flex:1"><div class="stat-val">${ss.length}</div><div class="stat-lbl">Sessions</div></div>
+      <div class="stat" style="flex:1"><div class="stat-val">${Math.round(totalMins/60*10)/10}h</div><div class="stat-lbl">Studied</div></div>
+      <div class="stat" style="flex:1"><div class="stat-val">${s.difficulty||3}/5</div><div class="stat-lbl">Difficulty</div></div>
     </div>
     <div class="form-field">
-      <label class="form-label">Update Grade</label>
+      <label class="form-label">Update Grade %</label>
       <input class="form-input" type="number" id="updateGrade" value="${s.grade}" min="0" max="100"/>
     </div>
-    <button class="btn btn-primary btn-full" onclick="updateSubjectGrade('${s.id}')" style="margin-bottom:10px">Update Grade</button>
+    <button class="btn btn-primary btn-full" onclick="updateSubjectGrade('${s.id}')" style="margin-bottom:8px">Update Grade</button>
     <button class="btn btn-danger btn-full" onclick="deleteSubject('${s.id}')">Delete Subject</button>
   `;
   document.getElementById('modalSubjectDetail').classList.add('open');
 }
 function updateSubjectGrade(id){
-  const s=subjects.find(s=>s.id===id);
-  if(!s) return;
+  const s=subjects.find(s=>s.id===id);if(!s)return;
   const g=parseFloat(document.getElementById('updateGrade').value);
-  if(isNaN(g)||g<0||g>100) return toast('Enter valid grade');
-  s.grade=g;
-  if(!s.history) s.history=[];
+  if(isNaN(g)||g<0||g>100)return toast('Valid grade 0-100');
+  const old=s.grade;s.grade=g;
+  if(!s.history)s.history=[];
   s.history.push({date:today(),grade:g});
-  save();
-  document.getElementById('modalSubjectDetail').classList.remove('open');
+  save();document.getElementById('modalSubjectDetail').classList.remove('open');
   renderAll();
-  toast('Grade updated! 📈');
+  toast(g>old?`Grade up! +${Math.round(g-old)}% 📈`:`Grade updated to ${g}%`);
 }
 function deleteSubject(id){
-  if(!confirm('Delete this subject?')) return;
-  subjects=subjects.filter(s=>s.id!==id);
-  save();
+  if(!confirm('Delete this subject?'))return;
+  subjects=subjects.filter(s=>s.id!==id);save();
   document.getElementById('modalSubjectDetail').classList.remove('open');
-  renderAll();
-  toast('Subject deleted');
+  renderAll();toast('Subject deleted');
+}
+
+// ── STATS ──
+function renderStats(){
+  // Grade breakdown
+  const el=document.getElementById('statsSubjects');
+  if(!subjects.length){el.innerHTML='<div class="empty">No subjects yet</div>';}
+  else{
+    el.innerHTML=subjects.slice().sort((a,b)=>a.grade-b.grade).map(s=>{
+      const color=gradeColor(s.grade);
+      const letter=letterGrade(s.grade);
+      const gpa=pctToGPA(s.grade).toFixed(1);
+      const gap=s.grade-s.target;
+      return`<div style="margin-bottom:14px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+          <div style="font-size:14px;font-weight:700">${s.emoji} ${esc(s.name)}</div>
+          <div style="font-size:15px;font-weight:800;color:${color}">${s.grade}% <span style="font-size:11px">${letter} · ${gpa}</span></div>
+        </div>
+        <div class="grade-bar" style="height:5px"><div class="grade-bar-fill" style="width:${Math.min(100,s.grade)}%;background:${color}"></div></div>
+        <div style="font-size:10px;color:var(--t2);margin-top:4px">Target ${s.target}% &nbsp; ${gap>=0?'✅ +'+Math.round(gap)+'% above':'⚠️ '+Math.abs(Math.round(gap))+'% below target'}</div>
+      </div>`;
+    }).join('<div class="divider"></div>');
+  }
+
+  // Recruiting snapshot
+  const gpa=calcGPA();
+  const avg=calcAvg();
+  const rt=RECRUIT_TARGETS[settings.goal||'d1'];
+  document.getElementById('recruitSnapshot').innerHTML=`
+    <div style="text-align:center;padding:10px 0">
+      <div style="font-size:40px;font-weight:900;color:${gpa!==null?(gpa>=rt.gpa?'var(--success)':'var(--danger)'):'var(--t3)'}">${gpa!==null?gpa.toFixed(2):'—'}</div>
+      <div style="font-size:12px;color:var(--t2);margin-top:4px">Your GPA</div>
+    </div>
+    <div class="calc-row"><span class="calc-label">Goal</span><span class="calc-val">${settings.goal?.toUpperCase()||'D1'} Baseball</span></div>
+    <div class="calc-row"><span class="calc-label">Target GPA</span><span class="calc-val">${rt.gpa}</span></div>
+    <div class="calc-row"><span class="calc-label">Status</span><span class="calc-val" style="color:${gpa!==null?(gpa>=rt.gpa?'var(--success)':'var(--danger)'):'var(--t3)'}">${gpa!==null?(gpa>=rt.gpa?'✅ Eligible':'⚠️ Need '+(rt.gpa-gpa).toFixed(1)+' more'):'Add subjects'}</span></div>
+    <div class="calc-row"><span class="calc-label">Overall avg</span><span class="calc-val">${avg!==null?Math.round(avg)+'%':'—'}</span></div>
+  `;
+
+  // Method breakdown
+  const methods={recall:0,spaced:0,pomodoro:0,practice:0,reread:0};
+  sessions.forEach(s=>{if(methods[s.method]!==undefined)methods[s.method]++;});
+  const total=Object.values(methods).reduce((a,b)=>a+b,0)||1;
+  const methodNames={recall:'🧠 Active Recall',spaced:'📅 Spaced Rep',pomodoro:'⏱️ Pomodoro',practice:'✏️ Practice',reread:'📖 Re-reading'};
+  document.getElementById('methodStats').innerHTML=Object.entries(methods).map(([k,v])=>`
+    <div style="margin-bottom:10px">
+      <div class="progress-label"><span>${methodNames[k]}</span><span>${v} sessions (${Math.round(v/total*100)}%)</span></div>
+      <div class="grade-bar" style="height:5px"><div class="grade-bar-fill" style="width:${Math.round(v/total*100)}%;background:${k==='recall'?'var(--success)':k==='reread'?'var(--danger)':'var(--hi)'}"></div></div>
+    </div>`).join('');
+
+  // Session log
+  const log=document.getElementById('sessionLog');
+  if(!sessions.length){log.innerHTML='<div class="empty">No sessions logged</div>';return;}
+  log.innerHTML=[...sessions].reverse().slice(0,20).map(s=>{
+    const subj=subjects.find(sub=>sub.id===s.subjectId);
+    const mIcon={recall:'🧠',spaced:'📅',pomodoro:'⏱️',practice:'✏️',reread:'📖'}[s.method]||'📝';
+    return`<div class="task-item">
+      <div style="font-size:20px">${subj?subj.emoji:'📚'}</div>
+      <div class="task-info">
+        <div class="task-name">${subj?esc(subj.name):'General'}</div>
+        <div class="task-meta">${s.minutes}min · Effort ${s.effort}/10 · ${mIcon} · ${fmtDate(s.date)}</div>
+      </div>
+      <div style="font-size:18px">${s.minutes>=60?'🌟':s.minutes>=30?'👍':'📝'}</div>
+    </div>`;
+  }).join('');
 }
 
 // ── SETTINGS ──
 function openSettings(){
   document.getElementById('settingName').value=settings.name||'';
-  document.getElementById('settingSystem').value=settings.system||'percent';
-  document.getElementById('settingTarget').value=settings.target||80;
+  document.getElementById('settingGoal').value=settings.goal||'d1';
+  document.getElementById('settingHours').value=settings.hours||2;
   document.getElementById('modalSettings').classList.add('open');
 }
 function saveSettings(){
   settings.name=document.getElementById('settingName').value.trim();
-  settings.system=document.getElementById('settingSystem').value;
-  settings.target=parseFloat(document.getElementById('settingTarget').value)||80;
-  save();
-  document.getElementById('modalSettings').classList.remove('open');
-  toast('Settings saved!');
+  settings.goal=document.getElementById('settingGoal').value;
+  settings.hours=parseFloat(document.getElementById('settingHours').value)||2;
+  save();document.getElementById('modalSettings').classList.remove('open');
+  renderAll();toast('Settings saved!');
 }
 function clearData(){
-  if(!confirm('This will delete ALL your data. Are you sure?')) return;
-  subjects=[];tasks=[];sessions=[];effortLog={};streak={count:0,lastDate:''};
-  save();
-  document.getElementById('modalSettings').classList.remove('open');
-  renderAll();
-  toast('Data cleared');
+  if(!confirm('Delete ALL data?'))return;
+  subjects=[];tasks=[];sessions=[];effortLog={};healthLog={};streak={count:0,lastDate:''};pomodorosDone=0;
+  save();document.getElementById('modalSettings').classList.remove('open');renderAll();toast('Data cleared');
 }
 
 // ── PAGE SWITCHING ──
@@ -984,58 +1332,27 @@ function switchPage(name,el){
   document.getElementById('page-'+name).classList.add('active');
   document.querySelectorAll('.bnav-item').forEach(b=>b.classList.remove('active'));
   el.classList.add('active');
-  if(name==='dash') renderDash();
-  if(name==='subjects') renderSubjects();
-  if(name==='tasks') renderTasks();
-  if(name==='study') renderStudy();
-  if(name==='stats') renderStats();
-}
-
-// ── TABS ──
-function switchTab(tab,el){
-  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
-  el.classList.add('active');
+  if(name==='dash')renderDash();
+  if(name==='subjects')renderSubjects();
+  if(name==='tasks')renderTasks();
+  if(name==='study')renderStudy();
+  if(name==='stats')renderStats();
 }
 
 // ── MODAL HELPERS ──
-function closeModalOutside(e,id){
-  if(e.target===document.getElementById(id)) document.getElementById(id).classList.remove('open');
-}
+function closeModalOutside(e,id){if(e.target===document.getElementById(id))document.getElementById(id).classList.remove('open');}
 
 // ── TOAST ──
 let toastTimer=null;
 function toast(msg){
-  const el=document.getElementById('toast');
-  el.textContent=msg;
-  el.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer=setTimeout(()=>el.classList.remove('show'),2500);
-}
-
-// ── UTILS ──
-function uid(){return Math.random().toString(36).slice(2,10);}
-function today(){return fmtISO(new Date());}
-function fmtISO(d){return d.toISOString().slice(0,10);}
-function fmtDate(str){
-  if(!str) return '';
-  const d=new Date(str+'T12:00:00');
-  return d.toLocaleDateString('en-US',{month:'short',day:'numeric'});
-}
-function esc(s){return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));}
-
-// ── RENDER ALL ──
-function renderAll(){
-  renderDash();
-  renderSubjects();
-  renderTasks();
-  renderStudy();
-  renderStats();
+  const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>el.classList.remove('show'),2800);
 }
 
 // ── INIT ──
-loadMotivation();
 renderTimerPresets();
 renderAll();
+function renderAll(){renderDash();renderSubjects();renderTasks();renderStudy();renderStats();}
 </script>
 </body>
 </html>
