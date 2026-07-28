@@ -38,12 +38,39 @@ function Invoke-Docker {
     $prev = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
     try {
-        $output = & docker @DockerArgs 2>&1 | Out-String
+        # ToString() renders merged stderr as plain text; without it PowerShell
+        # re-displays those lines as red NativeCommandError records.
+        $output = & docker @DockerArgs 2>&1 |
+                  ForEach-Object { $_.ToString() } |
+                  Out-String
         $code   = $LASTEXITCODE
     } finally {
         $ErrorActionPreference = $prev
     }
     return [pscustomobject]@{ Output = $output; ExitCode = $code }
+}
+
+<#
+  Is the backend actually serving? This asks the API directly instead of
+  grepping logs, which is unreliable: "Backend started successfully" scrolls out
+  of any fixed --tail window once the app logs anything else. A 401 counts as
+  ready - it means the API answered and simply wants credentials.
+#>
+function Test-BackendReady {
+    param([string]$BaseUrl = "http://localhost:4007")
+
+    try {
+        $r = Invoke-WebRequest -Uri "$BaseUrl/api/public/v1/integrations" `
+                               -Method Get -TimeoutSec 10 `
+                               -UseBasicParsing -ErrorAction Stop
+        return $true
+    } catch {
+        $status = $null
+        if ($_.Exception.Response) { $status = $_.Exception.Response.StatusCode.value__ }
+        # 401/403 => API is alive and rejecting an unauthenticated call.
+        if ($status -eq 401 -or $status -eq 403) { return $true }
+        return $false
+    }
 }
 
 # ── 1. Locate the running Postiz stack ─────────────────────────────────────
@@ -145,15 +172,17 @@ try {
 # ── 5. Wait for the backend to actually come up ────────────────────────────
 Info "Waiting for the backend to finish booting (this takes a minute or two)..."
 
-$logCmd        = @('logs', 'postiz', '--tail', '40')
+$logCmd        = @('logs', 'postiz', '--tail', '200')
 $ready         = $false
 $temporalFixed = $false
 
 foreach ($i in 1..40) {
     Start-Sleep -Seconds 5
-    $logs = (Invoke-Docker $logCmd).Output
 
-    if ($logs -match "Backend started successfully") { $ready = $true; break }
+    # Ground truth: can the API actually be reached?
+    if (Test-BackendReady) { $ready = $true; break }
+
+    $logs = (Invoke-Docker $logCmd).Output
 
     # Postiz needs Temporal; if those containers are down the backend won't boot.
     if (-not $temporalFixed -and $logs -match "Name resolution failed for target dns:temporal") {
@@ -188,6 +217,8 @@ if ($ready) {
     Write-Host "  3. Settings -> Public API -> Generate, then run:"
     Write-Host "       .\scripts\setup-postiz-key.ps1" -ForegroundColor Cyan
 } else {
-    Warn "Backend didn't report ready within ~3 minutes."
-    Warn "Check what it's doing with:  docker logs postiz --tail 40"
+    Warn "The API didn't respond within ~3 minutes."
+    Warn "See what the container is doing with:"
+    Warn "    docker logs postiz --tail 60"
+    Warn "If the last lines look healthy, just open http://localhost:4007 anyway."
 }
