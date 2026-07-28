@@ -1,0 +1,35 @@
+{
+  "_comment": "Hand-written narration scripts. The pipeline prefers these over Ollama generation because a 3B local model writes generic copy. Each script: 5-7 sentences, under 10 words each, ends with the CTA.",
+  "scripts": [
+    {
+      "id": "wt-001",
+      "hook": "progressive overload",
+      "text": "You've benched 135 for eight months. That's not training. That's a hobby. Muscle grows when you force it to. Add five pounds. Every single week. MuscleMap shows you the exact weight you lifted last time. Track every rep. MuscleMap, free in your browser."
+    },
+    {
+      "id": "wt-002",
+      "hook": "rear delts",
+      "text": "Your shoulders look flat from the side. It's not your front delts. Every press you do already hits those. Rear delts get nothing. Face pulls. Twenty reps. Three times a week. MuscleMap's heat map shows exactly what you've been skipping. Track every rep. MuscleMap, free in your browser."
+    },
+    {
+      "id": "wt-003",
+      "hook": "rest days",
+      "text": "You don't grow in the gym. You grow in bed. Training tears the muscle down. Sleep builds it back bigger. Seven days a week is ego, not progress. Take two off. MuscleMap tracks your weekly volume so you know when you're overcooking it. Track every rep. MuscleMap, free in your browser."
+    },
+    {
+      "id": "wt-004",
+      "hook": "squat depth",
+      "text": "Half squats with 315 impress nobody. Your quads barely activate above parallel. Drop the weight. Hit full depth. You'll grow more with 185 done right. Log the honest number in MuscleMap. Track every rep. MuscleMap, free in your browser."
+    },
+    {
+      "id": "wt-005",
+      "hook": "training to failure",
+      "text": "Stopping at ten because ten is round? That's not a set. That's counting. Push until the bar slows down. The last two reps build the muscle. Everything before is warm-up. MuscleMap logs your reps so you can see if you actually pushed. Track every rep. MuscleMap, free in your browser."
+    },
+    {
+      "id": "wt-006",
+      "hook": "grip failing first",
+      "text": "Your back isn't weak. Your grip is quitting early. You're leaving pulling gains on the floor. Use straps on your heaviest sets. Train grip separately after. Watch your rows jump forty pounds. MuscleMap charts it so you see the climb. Track every rep. MuscleMap, free in your browser."
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "name": "musclemap-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Remotion renderer for MuscleMap short-form videos (1080x1920)",
+  "scripts": {
+    "dev": "remotion studio src/index.ts",
+    "render": "remotion render src/index.ts MuscleMapShort out/video.mp4 --concurrency=1",
+    "still": "remotion still src/index.ts MuscleMapShort out/frame.png"
+  },
+  "dependencies": {
+    "@remotion/cli": "4.0.484",
+    "react": "19.2.7",
+    "react-dom": "19.2.7",
+    "remotion": "4.0.484"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.17",
+    "typescript": "^6.0.3"
+  }
+}

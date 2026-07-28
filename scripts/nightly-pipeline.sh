@@ -1,16 +1,20 @@
 #!/usr/bin/env bash
 # MuscleMap nightly content pipeline.
-# Runs 2-3 videos through the full create → post loop.
-# Designed to run unattended on a VPS via Orca automations.
+# Renders videos with Remotion and posts them through Postiz.
+# Designed to run unattended overnight.
 
-set -euo pipefail
+set -uo pipefail
 
 LOG="output/pipeline.log"
 mkdir -p output
 
 log() { echo "[$(date '+%H:%M:%S')] $*" | tee -a "$LOG"; }
 
-# ── Content rotation — day-of-week schedule ────────────────────────────────
+# Windows installs the launcher as `py`; Linux/mac use python3.
+PY=$(command -v py || command -v python3 || command -v python)
+[ -z "$PY" ] && { log "ERROR: no python found"; exit 1; }
+
+# ── Content rotation ───────────────────────────────────────────────────────
 DOW=$(date +%u)   # 1=Mon ... 7=Sun
 case "$DOW" in
   1) TYPES=("workout-tip"       "feature-highlight") ;;
@@ -23,75 +27,67 @@ case "$DOW" in
   *) TYPES=("workout-tip")                           ;;
 esac
 
-# Allow manual override
-if [ -n "${CONTENT_TYPE:-}" ]; then
-  TYPES=("$CONTENT_TYPE")
+[ -n "${CONTENT_TYPE:-}" ] && TYPES=("$CONTENT_TYPE")
+
+# Videos go out unlisted unless PRIVACY says otherwise.
+PRIVACY="${PRIVACY:-unlisted}"
+
+log "=== MuscleMap Nightly — $(date '+%Y-%m-%d') ==="
+log "Types: ${TYPES[*]}  (privacy: $PRIVACY)"
+
+# ── Preflight ──────────────────────────────────────────────────────────────
+if [ ! -d video/node_modules ]; then
+  log "ERROR: Remotion not installed. Run:  cd video && npm install"
+  exit 1
 fi
 
-log "=== MuscleMap Nightly Pipeline — $(date '+%Y-%m-%d') ==="
-log "Videos to create: ${TYPES[*]}"
-
-# ── Verify Ollama is running ───────────────────────────────────────────────
-if ! curl -sf http://localhost:11434/api/tags > /dev/null; then
-  log "ERROR: Ollama not running. Start it with: ollama serve"
-  exit 1
+if ! curl -sf "${POSTIZ_URL:-http://localhost:4007/api}/public/v1/integrations" \
+       -H "Authorization: ${POSTIZ_API_KEY:-x}" -o /dev/null; then
+  log "WARN: Postiz didn't answer. Videos will render but posting may fail."
 fi
 
 FAILED=0
 
 for TYPE in "${TYPES[@]}"; do
   log ""
-  log "--- Processing: $TYPE ---"
+  log "--- $TYPE ---"
 
-  # Step 1: generate script
-  log "Generating narration script..."
-  if ! bash scripts/generate-script.sh --type "$TYPE" >> "$LOG" 2>&1; then
-    log "WARN: Script generation failed for $TYPE — skipping"
-    FAILED=$((FAILED+1))
+  # Render. make-video.py picks a script from the written library, generates
+  # narration, sizes the shot table to the audio, and drives Remotion.
+  log "Rendering (Remotion; expect several minutes)..."
+  if ! "$PY" scripts/make-video.py --type "$TYPE" >> "$LOG" 2>&1; then
+    log "WARN: render failed for $TYPE — skipping"
+    FAILED=$((FAILED + 1))
     continue
   fi
-
-  # Step 2: build video
-  log "Building video..."
-  rm -f output/videos/.last-video-path
-  set +e
-  python3 scripts/create-video.py \
-    --script output/scripts/latest.txt \
-    --type "$TYPE" \
-    --output output/videos >> "$LOG" 2>&1
-  VIDEO_EXIT=$?
-  set -e
 
   VIDEO_PATH=$(cat output/videos/.last-video-path 2>/dev/null || echo "")
-  if [ $VIDEO_EXIT -ne 0 ] || [ -z "$VIDEO_PATH" ] || [ ! -f "$VIDEO_PATH" ]; then
-    log "WARN: Video not created for $TYPE — skipping"
-    FAILED=$((FAILED+1))
+  if [ -z "$VIDEO_PATH" ] || [ ! -f "$VIDEO_PATH" ]; then
+    log "WARN: no video produced for $TYPE — skipping"
+    FAILED=$((FAILED + 1))
     continue
   fi
-  log "Video ready: $VIDEO_PATH"
+  log "Rendered: $VIDEO_PATH"
 
-  # Step 3: generate captions
-  log "Generating captions..."
+  # Captions
+  log "Writing captions..."
   MODE=caption VIDEO_FILE="$VIDEO_PATH" \
     bash scripts/generate-script.sh --type "$TYPE" --mode caption >> "$LOG" 2>&1 || true
 
-  # Step 4: post to all connected channels via Postiz
-  log "Posting to social media..."
-  python3 scripts/post-to-postiz.py \
-    --file "$VIDEO_PATH" \
-    --caption output/captions/latest.json \
-    --channels all >> "$LOG" 2>&1 || log "WARN: posting failed for $TYPE (see $LOG)"
-
-  log "Done: $TYPE"
-  sleep 5   # brief pause between videos
+  # Post
+  log "Posting ($PRIVACY)..."
+  if "$PY" scripts/post-to-postiz.py \
+        --file "$VIDEO_PATH" \
+        --caption output/captions/latest.json \
+        --privacy "$PRIVACY" \
+        --channels all >> "$LOG" 2>&1; then
+    log "Posted: $TYPE"
+  else
+    log "WARN: posting failed for $TYPE (see $LOG)"
+    FAILED=$((FAILED + 1))
+  fi
 done
 
 log ""
-log "=== Pipeline complete. Failed: $FAILED / ${#TYPES[@]} ==="
+log "=== Done. Failures: $FAILED ==="
 log "Results: output/post-log.jsonl"
-
-# Send a push notification to Orca mobile app if CLI is available
-if command -v orca &>/dev/null; then
-  SUMMARY="MuscleMap: created ${#TYPES[@]} videos, $FAILED failed. Check post-log.jsonl."
-  orca terminal send --name "pipeline" "echo '$SUMMARY'" 2>/dev/null || true
-fi

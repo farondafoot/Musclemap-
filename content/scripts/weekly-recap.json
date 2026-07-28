@@ -1,0 +1,30 @@
+{
+  "_comment": "Sunday recap format. Casual, observational, ends on a prompt that makes people open the app.",
+  "scripts": [
+    {
+      "id": "wr-001",
+      "hook": "calves",
+      "text": "Nobody trained calves this week. I can tell. They're the most skipped muscle in the building. Twice a week. Slow negatives. Full stretch at the bottom. Open MuscleMap and check if calves are grey. Bet they are. Track every rep. MuscleMap, free in your browser."
+    },
+    {
+      "id": "wr-002",
+      "hook": "ego lifting",
+      "text": "Saw four people quarter-rep the bench press this week. Same four guys. Same flat chest. Range of motion beats weight every time. Log the number you actually lifted. Not the one you wanted to. Track every rep. MuscleMap, free in your browser."
+    },
+    {
+      "id": "wr-003",
+      "hook": "push pull imbalance",
+      "text": "Everyone benches Monday. Almost nobody rows Tuesday. That's why your shoulders round forward. Match your pulling volume to your pushing. One for one. MuscleMap totals both so you can't fool yourself. Track every rep. MuscleMap, free in your browser."
+    },
+    {
+      "id": "wr-004",
+      "hook": "phone between sets",
+      "text": "Your rest periods are eight minutes long. That's not rest. That's scrolling. Ninety seconds for accessories. Three minutes for heavy compounds. Time it. Your workout gets shorter and harder. Log it in MuscleMap while you wait. Track every rep. MuscleMap, free in your browser."
+    },
+    {
+      "id": "wr-005",
+      "hook": "the forgotten week",
+      "text": "Quick check. What did you lift last Tuesday? You don't know. Nobody does. That's the whole problem with training from memory. The log isn't admin. It's the training. Open MuscleMap and find out. Track every rep. MuscleMap, free in your browser."
+    }
+  ]
+}

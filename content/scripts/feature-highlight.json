@@ -1,0 +1,30 @@
+{
+  "_comment": "Hand-written narration scripts for MuscleMap feature showcases. Written as an enthusiastic user, not a brand account.",
+  "scripts": [
+    {
+      "id": "fh-001",
+      "hook": "muscle heat map",
+      "text": "This is the feature that fixed my imbalances. MuscleMap colors in every muscle you've trained this week. Skipped legs? The whole lower half stays grey. You can't lie to a heat map. I found out I hadn't hit hamstrings in three weeks. Track every rep. MuscleMap, free in your browser."
+    },
+    {
+      "id": "fh-002",
+      "hook": "no download",
+      "text": "No app store. No download. No account nonsense. MuscleMap opens in your browser and just works. Add it to your home screen and it acts like a real app. Works offline too. That's it. That's the pitch. Track every rep. MuscleMap, free in your browser."
+    },
+    {
+      "id": "fh-003",
+      "hook": "progress charts",
+      "text": "Memory is a liar. You think you're getting stronger. MuscleMap draws the actual line. Every exercise. Every session. Plotted over time. Flat line means change something. Climbing line means keep going. Track every rep. MuscleMap, free in your browser."
+    },
+    {
+      "id": "fh-004",
+      "hook": "OLED dark theme",
+      "text": "Gym lighting is brutal at 6am. MuscleMap has a true black mode. Not dark grey. Actual black. Pixels off on OLED screens. Saves battery and won't blind you between sets. Small thing. Huge difference. Track every rep. MuscleMap, free in your browser."
+    },
+    {
+      "id": "fh-005",
+      "hook": "volume tracking",
+      "text": "Sets times reps times weight. That's volume. It's the number that actually predicts growth. MuscleMap totals it per muscle group automatically. You'll see chest at twenty sets and back at six. Then you'll understand your posture. Track every rep. MuscleMap, free in your browser."
+    }
+  ]
+}
