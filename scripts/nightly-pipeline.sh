@@ -75,12 +75,12 @@ for TYPE in "${TYPES[@]}"; do
   MODE=caption VIDEO_FILE="$VIDEO_PATH" \
     bash scripts/generate-script.sh --type "$TYPE" --mode caption >> "$LOG" 2>&1 || true
 
-  # Step 4: post to all platforms
+  # Step 4: post to all connected channels via Postiz
   log "Posting to social media..."
-  python3 scripts/post-to-social.py \
+  python3 scripts/post-to-postiz.py \
     --file "$VIDEO_PATH" \
     --caption output/captions/latest.json \
-    --platforms all 2>>"$LOG" || true
+    --channels all >> "$LOG" 2>&1 || log "WARN: posting failed for $TYPE (see $LOG)"
 
   log "Done: $TYPE"
   sleep 5   # brief pause between videos

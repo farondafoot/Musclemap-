@@ -1,59 +1,70 @@
 # Skill: post-to-social
 
-Auto-post MuscleMap videos to YouTube Shorts, Instagram Reels, and TikTok.
-All posting is done via official free-tier APIs — no paid services.
+Auto-post MuscleMap videos to YouTube Shorts, Instagram Reels, and TikTok
+through **Postiz** — a self-hosted open-source scheduler.
+
+Postiz owns the OAuth apps for every platform, so there is no Google Cloud
+Console, Facebook Developer app, or TikTok dev portal to configure. You connect
+each account by clicking "Connect" in the Postiz web UI once, then everything
+posts with a single API key.
+
+First-time setup: **see `POSTIZ_SETUP.md` in the repo root.**
 
 ## Quick start
 
 ```bash
-python3 scripts/post-to-social.py \
-  --file output/videos/<FILENAME>.mp4 \
-  --platforms youtube,instagram,tiktok \
-  --caption-style auto          # Ollama writes the caption
+python3 scripts/post-to-postiz.py --file output/videos/<FILENAME>.mp4
 ```
 
-## Platform setup (one-time)
-
-Copy `config/social.env.example` → `config/social.env` and fill in your keys.
-**Never commit `social.env` — it's in `.gitignore`.**
-
-| Platform | What you need | Free tier limit |
-|---|---|---|
-| YouTube | Google Cloud project, OAuth2 credentials | 10,000 units/day |
-| Instagram | Facebook Developer App, Instagram Business account | 200 calls/hour |
-| TikTok | TikTok for Developers app | 100 videos/day |
+That uploads the video once and posts it to every connected channel.
 
 ## Agent instructions
 
-### Step 1 — Generate caption
+### Step 1 — Generate captions
 ```bash
-bash scripts/generate-script.sh --mode caption --video-file <FILE>
-# Ollama reads the video title/type and writes platform-optimised captions
-# Output: output/captions/latest.json  (keys: youtube, instagram, tiktok)
+MODE=caption VIDEO_FILE="<VIDEO_PATH>" \
+  bash scripts/generate-script.sh --type <TYPE> --mode caption
 ```
+Ollama writes per-platform captions to `output/captions/latest.json` with keys
+`youtube`, `instagram`, `tiktok` — these match Postiz's provider identifiers, so
+each channel gets its own copy automatically. A `default` key covers any channel
+without a specific caption.
 
-### Step 2 — Post to all platforms
+### Step 2 — Post
 ```bash
-python3 scripts/post-to-social.py \
-  --file <VIDEO_FILE> \
+python3 scripts/post-to-postiz.py \
+  --file <VIDEO_PATH> \
   --caption output/captions/latest.json \
-  --platforms all
+  --channels all
 ```
 
-### Step 3 — Log result
-Results are appended to `output/post-log.jsonl` with timestamp, platform,
-post ID, and URL. Check this file to confirm success.
+### Step 3 — Confirm
+Results append to `output/post-log.jsonl` (timestamp, platform, status, error).
+The live queue is at `http://localhost:4007/launches`.
 
-## Caption style guide (Ollama prompt)
+## Flags
 
-The content model (`llama3.2`) is instructed to:
-- Open with a hook in the first 3 words (no "Hey guys!")
-- Include 3–5 relevant fitness hashtags
-- End with "Try MuscleMap free 💪" on its own line
-- Keep it under 150 chars for TikTok, 2,200 for Instagram
+| Flag | Purpose |
+|---|---|
+| `--file` | Path to the `.mp4` (required) |
+| `--caption` | Caption JSON (default: `output/captions/latest.json`) |
+| `--channels` | `all`, or comma-separated e.g. `youtube,tiktok` |
+| `--when` | `now` (default) or minutes to delay, e.g. `30` |
 
-## Error handling
+## Caption style guide
 
-If a platform post fails, the script retries once after 30 seconds, then logs
-the error to `output/post-log.jsonl` with `status: failed`. The nightly
-pipeline will skip failed platforms and continue to the next.
+The content model is instructed to:
+- Open with a hook in the first 3 words — no "Hey guys"
+- Include 3–5 fitness hashtags
+- End with "Try MuscleMap free 💪"
+- Stay under 150 chars for TikTok, 2,200 for Instagram
+
+## Failure behaviour
+
+If Postiz is unreachable or a channel rejects the post, the script logs the
+error to `output/post-log.jsonl` and exits non-zero. The nightly pipeline logs a
+warning and continues to the next video rather than aborting the run.
+
+Two platform-side constraints worth knowing, independent of Postiz:
+- **Instagram** only accepts API posts to a Business/Creator account.
+- **TikTok** holds posts from unapproved apps as private drafts until review.
