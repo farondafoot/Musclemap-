@@ -43,12 +43,13 @@ if [ "$MODE" = "script" ]; then
 ${TOPIC_LINE}
 ${TEMPLATE}
 
-Write a punchy 30-45 second video narration script. Rules:
+Write a 30-second video narration script. STRICT rules:
+- Maximum 6 sentences total. No more.
+- Each sentence under 10 words.
 - Hook in first 5 words — no 'Hey guys' or 'Welcome back'
-- Short sentences. Maximum 12 words each.
-- Mention MuscleMap by name at least twice
-- End with: 'Track every rep. MuscleMap — free in your browser.'
-- Output ONLY the script text, no stage directions, no labels"
+- Mention MuscleMap once
+- Last sentence must be: Track every rep. MuscleMap, free in your browser.
+- Output ONLY the narration text. No labels, no directions, nothing else."
 
   OUTPUT_FILE="output/scripts/latest.txt"
 

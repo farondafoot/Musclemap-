@@ -1,173 +1,236 @@
 #!/usr/bin/env python3
 """
-Creates a branded MuscleMap short-form video (1080x1920, 30-60s).
-Uses moviepy + Pillow + pyttsx3 — all free, all local, no API calls.
+Creates a branded MuscleMap short-form video (1080x1920, ~30-45s).
+Fixed for Windows: uses system fonts, capped video length, better visuals.
 """
 
 import argparse
-import json
 import os
+import sys
 import textwrap
 from datetime import datetime
 from pathlib import Path
 
-# PIL / Pillow
-from PIL import Image, ImageDraw, ImageFont
-
-# pyttsx3 for local TTS
+from PIL import Image, ImageDraw, ImageFont, ImageFilter
 import pyttsx3
-
-# moviepy
 from moviepy.editor import (
     AudioFileClip,
-    ColorClip,
-    CompositeVideoClip,
     ImageClip,
-    TextClip,
     concatenate_videoclips,
 )
 
-# ── Brand tokens (matches MuscleMap Index.html) ────────────────────────────
-BG       = (10,  10,  11)    # #0a0a0b
-S1       = (17,  17,  19)    # #111113
-ACCENT   = (91,  141, 239)   # #5b8def
-SUCCESS  = (48,  196, 138)   # #30c48a
-T1       = (237, 237, 239)   # #ededef  — primary text
-T2       = (139, 139, 150)   # #8b8b96  — secondary text
-
-W, H = 1080, 1920
-FPS  = 30
-
-
-def tts_narrate(script_text: str, output_path: str) -> float:
-    """Generate MP3 narration with pyttsx3. Returns duration in seconds."""
-    engine = pyttsx3.init()
-    engine.setProperty("rate",  165)   # words per minute
-    engine.setProperty("volume", 0.95)
-    # Pick a clear voice if available
-    voices = engine.getProperty("voices")
-    for v in voices:
-        if "david" in v.name.lower() or "alex" in v.name.lower():
-            engine.setProperty("voice", v.id)
-            break
-    engine.save_to_file(script_text, output_path)
-    engine.runAndWait()
-    clip = AudioFileClip(output_path)
-    duration = clip.duration
-    clip.close()
-    return duration
+# ── Brand tokens ───────────────────────────────────────────────────────────
+BG      = (10,  10,  11)
+S1      = (20,  20,  24)
+ACCENT  = (91,  141, 239)
+SUCCESS = (48,  196, 138)
+T1      = (237, 237, 239)
+T2      = (139, 139, 150)
+W, H    = 1080, 1920
+FPS     = 30
+MAX_SEC = 50   # hard cap — short-form content only
 
 
-def make_frame_image(text: str, video_type: str, frame_num: int, total: int) -> Image.Image:
-    """Render a single text card as a PIL Image (1080×1920)."""
-    img = Image.new("RGB", (W, H), BG)
+# ── Font loader (Windows / Mac / Linux) ────────────────────────────────────
+def load_fonts():
+    candidates = {
+        "bold": [
+            "C:/Windows/Fonts/arialbd.ttf",          # Windows Arial Bold
+            "C:/Windows/Fonts/segoeuib.ttf",          # Windows Segoe UI Bold
+            "C:/Windows/Fonts/calibrib.ttf",          # Windows Calibri Bold
+            "/System/Library/Fonts/Helvetica.ttc",    # Mac
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf",  # Linux
+        ],
+        "regular": [
+            "C:/Windows/Fonts/arial.ttf",
+            "C:/Windows/Fonts/segoeui.ttf",
+            "C:/Windows/Fonts/calibri.ttf",
+            "/System/Library/Fonts/Helvetica.ttc",
+            "/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",
+        ],
+    }
+
+    def first_existing(paths, size):
+        for p in paths:
+            if os.path.exists(p):
+                return ImageFont.truetype(p, size)
+        return ImageFont.load_default()
+
+    return {
+        "logo":  first_existing(candidates["bold"],    56),
+        "body":  first_existing(candidates["bold"],    72),
+        "sub":   first_existing(candidates["regular"], 34),
+        "cta":   first_existing(candidates["regular"], 30),
+    }
+
+
+# ── Background gradient ────────────────────────────────────────────────────
+def make_bg() -> Image.Image:
+    img  = Image.new("RGB", (W, H), BG)
+    draw = ImageDraw.Draw(img)
+    # Subtle radial feel — slightly lighter centre
+    for y in range(H):
+        t = y / H
+        r = int(BG[0] + (S1[0] - BG[0]) * (1 - abs(t - 0.5) * 2))
+        g = int(BG[1] + (S1[1] - BG[1]) * (1 - abs(t - 0.5) * 2))
+        b = int(BG[2] + (S1[2] - BG[2]) * (1 - abs(t - 0.5) * 2))
+        draw.line([(0, y), (W, y)], fill=(r, g, b))
+    # Accent stripe top
+    for y in range(8):
+        alpha = 1.0 - y / 8
+        c = tuple(int(ACCENT[i] * alpha + BG[i] * (1 - alpha)) for i in range(3))
+        draw.line([(0, y), (W, y)], fill=c)
+    return img
+
+
+# ── Single card renderer ───────────────────────────────────────────────────
+def make_card(text: str, video_type: str, idx: int, total: int,
+              fonts: dict, bg: Image.Image) -> Image.Image:
+    img  = bg.copy()
     draw = ImageDraw.Draw(img)
 
-    # Gradient top bar — accent stripe
-    for y in range(6):
-        alpha = 1.0 - (y / 6)
-        r = int(ACCENT[0] * alpha + BG[0] * (1 - alpha))
-        g = int(ACCENT[1] * alpha + BG[1] * (1 - alpha))
-        b = int(ACCENT[2] * alpha + BG[2] * (1 - alpha))
-        draw.line([(0, y), (W, y)], fill=(r, g, b))
+    # Logo
+    draw.text((60, 80), "MuscleMap", font=fonts["logo"], fill=ACCENT)
+    draw.text((60, 148), video_type.replace("-", " ").title(),
+              font=fonts["sub"], fill=T2)
 
-    # Logo / app name
-    try:
-        logo_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 52)
-        sub_font  = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf", 32)
-        body_font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf", 68)
-    except Exception:
-        logo_font = sub_font = body_font = ImageFont.load_default()
+    # Divider line
+    draw.rectangle([(60, 195), (W - 60, 197)], fill=(40, 40, 48))
 
-    draw.text((54, 80), "MuscleMap", font=logo_font, fill=ACCENT)
-    draw.text((54, 144), video_type.replace("-", " ").title(), font=sub_font, fill=T2)
-
-    # Body text — centred, wrapped at 18 chars per line
-    wrapped = textwrap.fill(text, width=22)
+    # Body text — wrap at ~16 chars per line for big font
+    wrapped = textwrap.fill(text.strip(), width=16)
     lines   = wrapped.split("\n")
-    total_h = len(lines) * 90
-    start_y = (H - total_h) // 2 - 80
+
+    line_h  = 96
+    total_h = len(lines) * line_h
+    start_y = (H - total_h) // 2 - 60
 
     for i, line in enumerate(lines):
-        y = start_y + i * 90
-        # Highlight numbers and percentages in accent colour
+        y = start_y + i * line_h
         words = line.split()
-        x = 54
+        x = 60
         for word in words:
-            colour = ACCENT if any(c.isdigit() for c in word) else T1
-            draw.text((x, y), word + " ", font=body_font, fill=colour)
-            bbox = draw.textbbox((x, y), word + " ", font=body_font)
-            x += bbox[2] - bbox[0]
+            is_number = any(c.isdigit() or c == "%" for c in word)
+            colour    = ACCENT if is_number else T1
+            draw.text((x, y), word + " ", font=fonts["body"], fill=colour)
+            bb = draw.textbbox((x, y), word + " ", font=fonts["body"])
+            x += bb[2] - bb[0]
 
-    # Progress bar (shows how far through the video)
-    bar_y = H - 180
-    bar_w = int(W * (frame_num / max(total - 1, 1)))
-    draw.rectangle([(0, bar_y), (W, bar_y + 4)], fill=S1)
-    draw.rectangle([(0, bar_y), (bar_w, bar_y + 4)], fill=ACCENT)
+    # Progress bar
+    bar_y = H - 200
+    draw.rectangle([(60, bar_y), (W - 60, bar_y + 5)], fill=(30, 30, 36))
+    prog_w = int((W - 120) * (idx / max(total - 1, 1)))
+    draw.rectangle([(60, bar_y), (60 + prog_w, bar_y + 5)], fill=ACCENT)
 
-    # CTA at bottom
-    draw.text((54, H - 130), "Track every rep. Free in your browser.",
-              font=sub_font, fill=T2)
+    # CTA
+    draw.text((60, H - 150), "Track every rep. Free in your browser.",
+              font=fonts["cta"], fill=T2)
+
+    # Card counter dots
+    dot_r = 5
+    dot_spacing = 16
+    total_dots_w = total * dot_spacing
+    dot_x = (W - total_dots_w) // 2
+    for i2 in range(total):
+        fill = ACCENT if i2 == idx else (50, 50, 60)
+        draw.ellipse(
+            [(dot_x + i2 * dot_spacing - dot_r, H - 80 - dot_r),
+             (dot_x + i2 * dot_spacing + dot_r, H - 80 + dot_r)],
+            fill=fill
+        )
 
     return img
 
 
+# ── TTS ────────────────────────────────────────────────────────────────────
+def tts_narrate(text: str, path: str) -> float:
+    engine = pyttsx3.init()
+    engine.setProperty("rate",   155)
+    engine.setProperty("volume", 0.95)
+    # prefer a natural-sounding voice
+    voices = engine.getProperty("voices")
+    for v in voices:
+        name = v.name.lower()
+        if any(x in name for x in ["david", "mark", "alex", "zira", "hazel"]):
+            engine.setProperty("voice", v.id)
+            break
+    engine.save_to_file(text, path)
+    engine.runAndWait()
+    clip = AudioFileClip(path)
+    dur  = clip.duration
+    clip.close()
+    return dur
+
+
+# ── Main ───────────────────────────────────────────────────────────────────
 def create_video(script_path: str, video_type: str, output_dir: str) -> str:
     Path(output_dir).mkdir(parents=True, exist_ok=True)
-    tmp_dir = Path(output_dir) / ".tmp"
-    tmp_dir.mkdir(exist_ok=True)
+    tmp = Path(output_dir) / ".tmp"
+    tmp.mkdir(exist_ok=True)
 
-    with open(script_path) as f:
+    with open(script_path, encoding="utf-8") as f:
         script = f.read().strip()
 
-    sentences = [s.strip() for s in script.replace("\n", " ").split(".") if len(s.strip()) > 4]
+    # Split into sentences and hard-cap length
+    raw = [s.strip() for s in script.replace("\n", " ").split(".") if len(s.strip()) > 5]
+
+    # Estimate WPS at 155 WPM → ~2.6 words/sec
+    # Cap to MAX_SEC seconds worth of content
+    sentences, word_count = [], 0
+    for s in raw:
+        wc = len(s.split())
+        if word_count + wc > MAX_SEC * 2.6:
+            break
+        sentences.append(s)
+        word_count += wc
+
     if not sentences:
-        raise ValueError("Script is empty or too short.")
+        sentences = raw[:6]   # fallback: take first 6
 
-    # Generate narration audio
-    audio_path = str(tmp_dir / "narration.mp3")
-    print("Generating TTS narration...")
-    duration   = tts_narrate(script, audio_path)
-    per_card   = duration / len(sentences)
+    print(f"Using {len(sentences)} sentences (~{word_count} words)")
 
-    # Build one ImageClip per sentence
-    print(f"Building {len(sentences)} cards ({duration:.1f}s total)...")
+    fonts = load_fonts()
+    bg    = make_bg()
+
+    # TTS for full script
+    short_script = ". ".join(sentences) + "."
+    audio_path   = str(tmp / "narration.wav")
+    print("Generating narration...")
+    duration = tts_narrate(short_script, audio_path)
+    per_card = duration / len(sentences)
+
+    print(f"Building {len(sentences)} cards ({duration:.0f}s)...")
     clips = []
     for i, sentence in enumerate(sentences):
-        frame = make_frame_image(sentence, video_type, i, len(sentences))
-        frame_path = str(tmp_dir / f"frame_{i:03d}.png")
-        frame.save(frame_path)
-        clip = ImageClip(frame_path, duration=per_card)
-        clips.append(clip)
+        card = make_card(sentence, video_type, i, len(sentences), fonts, bg)
+        p    = str(tmp / f"card_{i:03d}.png")
+        card.save(p, quality=95)
+        clips.append(ImageClip(p, duration=per_card))
 
+    from moviepy.editor import CompositeVideoClip
     video = concatenate_videoclips(clips, method="compose")
     audio = AudioFileClip(audio_path).subclip(0, video.duration)
     video = video.set_audio(audio)
 
-    # Output filename
-    date_str  = datetime.now().strftime("%Y-%m-%d")
-    out_path  = str(Path(output_dir) / f"{date_str}_{video_type}.mp4")
+    date_str = datetime.now().strftime("%Y-%m-%d")
+    out_path = str(Path(output_dir) / f"{date_str}_{video_type}.mp4")
 
-    print(f"Rendering {out_path} ...")
-    video.write_videofile(out_path, fps=FPS, codec="libx264", audio_codec="aac",
-                          verbose=False, logger=None)
+    print(f"Rendering {out_path}...")
+    video.write_videofile(out_path, fps=FPS, codec="libx264",
+                          audio_codec="aac", verbose=False, logger=None)
 
-    # Cleanup tmp
     import shutil
-    shutil.rmtree(tmp_dir, ignore_errors=True)
+    shutil.rmtree(tmp, ignore_errors=True)
 
-    # Write path to a known file so nightly-pipeline.sh can read it without parsing stdout
     (Path(output_dir) / ".last-video-path").write_text(out_path)
-
     print(f"Done: {out_path}")
     return out_path
 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--script",  required=True, help="Path to narration script text file")
-    parser.add_argument("--type",    required=True, help="Content type (workout-tip, etc.)")
-    parser.add_argument("--output",  default="output/videos", help="Output directory")
+    parser.add_argument("--script",  required=True)
+    parser.add_argument("--type",    required=True)
+    parser.add_argument("--output",  default="output/videos")
     args = parser.parse_args()
-
     create_video(args.script, args.type, args.output)

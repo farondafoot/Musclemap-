@@ -21,7 +21,7 @@ payload = {
     "model":   model,
     "prompt":  prompt,
     "stream":  False,
-    "options": {"temperature": 0.8, "num_predict": 600},
+    "options": {"temperature": 0.8, "num_predict": 180},  # short = punchy content
 }
 
 try:
