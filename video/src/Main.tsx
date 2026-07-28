@@ -25,6 +25,7 @@ type Content = {
   stat?:     { value: string; caption: string };
   lines:     string[];
   audio?:    string | null;
+  audioFrom?: number;
   fps:       number;
   brandOpen: number;
   hero:      number;
@@ -64,13 +65,17 @@ const buildShots = () => {
 const { shots, total } = buildShots();
 export const TOTAL_FRAMES = total;
 
-/** Quick flash on hard cuts, so a change of shot reads as a beat. */
-const FlashCut: React.FC<{ tone?: Tone }> = () => {
+/**
+ * Short fade up at the head of each shot. Replaces an earlier white flash,
+ * which read as a strobe rather than a beat — the scene animations already
+ * carry the cut, so the transition only needs to not be abrupt.
+ */
+const ShotIn: React.FC<React.PropsWithChildren> = ({ children }) => {
   const frame = useCurrentFrame();
-  const opacity = interpolate(frame, [0, 2, 6], [0, 0.14, 0], {
+  const opacity = interpolate(frame, [0, 5], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
-  return <AbsoluteFill style={{ backgroundColor: '#ffffff', opacity, pointerEvents: 'none' }} />;
+  return <AbsoluteFill style={{ opacity }}>{children}</AbsoluteFill>;
 };
 
 export const DailyMain: React.FC = () => {
@@ -79,7 +84,14 @@ export const DailyMain: React.FC = () => {
 
   return (
     <AbsoluteFill style={{ backgroundColor: theme.bg }}>
-      {c.audio ? <Audio src={staticFile(c.audio)} /> : null}
+      {/* Narration covers the line shots, so it starts after the cold open and
+          hero stat — each line's shot is sized to its own clip, keeping voice
+          and visuals locked together. */}
+      {c.audio ? (
+        <Sequence from={c.audioFrom ?? 0}>
+          <Audio src={staticFile(c.audio)} />
+        </Sequence>
+      ) : null}
 
       {shots.map((shot, idx) => {
         const key = `${shot.kind}-${idx}`;
@@ -95,16 +107,17 @@ export const DailyMain: React.FC = () => {
         if (shot.kind === 'hero' && c.stat) {
           return (
             <Sequence key={key} from={shot.from} durationInFrames={shot.duration}>
-              <HeroStat
-                kicker={c.kicker}
-                date={c.date}
-                value={c.stat.value}
-                caption={c.stat.caption}
-                line={c.headline}
-                tone={tone}
-                source={c.source}
-              />
-              <FlashCut />
+              <ShotIn>
+                <HeroStat
+                  kicker={c.kicker}
+                  date={c.date}
+                  value={c.stat.value}
+                  caption={c.stat.caption}
+                  line={c.headline}
+                  tone={tone}
+                  source={c.source}
+                />
+              </ShotIn>
             </Sequence>
           );
         }
@@ -113,25 +126,27 @@ export const DailyMain: React.FC = () => {
           const { line, i } = shot.payload as { line: string; i: number };
           return (
             <Sequence key={key} from={shot.from} durationInFrames={shot.duration}>
-              <LineCard
-                kicker={c.kicker}
-                date={c.date}
-                line={line}
-                index={i}
-                total={lineCount}
-                tone={tone}
-                source={c.source}
-                variant={VARIANTS[i % VARIANTS.length]}
-              />
-              <FlashCut />
+              <ShotIn>
+                <LineCard
+                  kicker={c.kicker}
+                  date={c.date}
+                  line={line}
+                  index={i}
+                  total={lineCount}
+                  tone={tone}
+                  source={c.source}
+                  variant={VARIANTS[i % VARIANTS.length]}
+                />
+              </ShotIn>
             </Sequence>
           );
         }
 
         return (
           <Sequence key={key} from={shot.from} durationInFrames={shot.duration}>
-            <Outro cta={c.cta} tone={tone} />
-            <FlashCut />
+            <ShotIn>
+              <Outro cta={c.cta} tone={tone} />
+            </ShotIn>
           </Sequence>
         );
       })}

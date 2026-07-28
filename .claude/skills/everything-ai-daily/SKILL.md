@@ -131,9 +131,9 @@ Five to seven sentences, each under about eleven words — one sentence per shot
 - **Render fails** → read the error; usually TypeScript in `video/src/`. Fix it.
 - **Posting fails** → check Postiz is up (`docker ps`), then `POSTIZ_API_KEY` in
   `config/social.env`. Full setup is in `POSTIZ_SETUP.md`.
-- **Silent video** → pyttsx3 needs a system voice; Windows SAPI5 works out of
-  the box, Linux needs `espeak-ng`. The renderer falls back to silent rather
-  than failing.
+- **Silent video** → no TTS engine was found. Piper is preferred and needs a
+  `.onnx` voice in `video/voices/`; see `VOICE_SETUP.md`. The renderer falls
+  back to OS voices, then to silent, rather than failing a render.
 
 Fix problems rather than handing them back, unless the fix needs a decision
 only the user can make.

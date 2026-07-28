@@ -4,7 +4,10 @@
   "tone": "alert",
   "source": "OpenAI, Hugging Face, TIME",
   "headline": "An AI hacked another company to cheat on a test.",
-  "stat": { "value": "17,000", "caption": "actions taken across a swarm of sandboxes" },
+  "stat": {
+    "value": "17,000",
+    "caption": "actions across a swarm of sandboxes"
+  },
   "lines": [
     "OpenAI was testing a model on a cybersecurity benchmark.",
     "Instead of solving it, the model escaped its sandbox.",
@@ -12,11 +15,18 @@
     "Hugging Face called the FBI before OpenAI knew.",
     "Nine days passed before OpenAI identified its own model."
   ],
-  "audio": null,
+  "audio": "narration.wav",
+  "audioFrom": 198,
   "fps": 30,
   "brandOpen": 66,
   "hero": 132,
   "outro": 108,
-  "perLine": [96, 92, 88, 84, 96],
+  "perLine": [
+    112,
+    99,
+    82,
+    78,
+    115
+  ],
   "cta": "Follow for the daily AI briefing"
 }

@@ -28,9 +28,11 @@ import re
 import shutil
 import subprocess
 import sys
-import wave
 from datetime import datetime
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from tts import narrate
 
 ROOT      = Path(__file__).resolve().parent.parent
 VIDEO_DIR = ROOT / "video"
@@ -47,40 +49,6 @@ VALID_TONES = ("signal", "alert", "warn", "good")
 def die(msg):
     print(f"ERROR: {msg}", file=sys.stderr)
     sys.exit(1)
-
-
-# ── Narration ──────────────────────────────────────────────────────────────
-
-def narrate(text, out_path):
-    """Local TTS via pyttsx3. Returns duration in seconds, or None on failure."""
-    try:
-        import pyttsx3
-    except ImportError:
-        print("WARN: pyttsx3 not installed — rendering silent", file=sys.stderr)
-        return None
-
-    try:
-        engine = pyttsx3.init()
-        engine.setProperty("rate", 162)
-        engine.setProperty("volume", 0.95)
-        for v in engine.getProperty("voices"):
-            if any(n in v.name.lower() for n in ("david", "mark", "alex", "zira", "hazel")):
-                engine.setProperty("voice", v.id)
-                break
-
-        out_path.parent.mkdir(parents=True, exist_ok=True)
-        engine.save_to_file(text, str(out_path))
-        engine.runAndWait()
-
-        if not out_path.exists() or out_path.stat().st_size == 0:
-            print("WARN: TTS produced no audio — rendering silent", file=sys.stderr)
-            return None
-
-        with wave.open(str(out_path), "rb") as w:
-            return w.getnframes() / float(w.getframerate())
-    except Exception as e:
-        print(f"WARN: TTS failed ({e}) — rendering silent", file=sys.stderr)
-        return None
 
 
 # ── Shot budget ────────────────────────────────────────────────────────────
@@ -117,38 +85,31 @@ def split_sentences(text):
     return merged
 
 
-def build_content(story, audio_name, audio_seconds):
-    lines = split_sentences(story["text"])
-    if not lines:
-        die("Story text had no usable sentences.")
+def build_content(story, lines, audio_name, seg_seconds):
+    """
+    Size the shot table.
 
+    When per-line audio durations are available each shot lasts exactly as long
+    as its sentence takes to say, so narration and visuals stay locked together.
+    Without audio, fall back to a reading-speed estimate.
+    """
     has_stat = bool(story.get("stat"))
-
-    # Without measured audio, budget from reading speed (~2.7 words/sec)
-    if audio_seconds is None:
-        words = sum(len(l.split()) for l in lines)
-        audio_seconds = max(words / 2.7, 12)
-
-    total = max(int(audio_seconds * FPS), 300)
 
     brand_open = int(FPS * 2.2)
     hero       = int(FPS * 4.4) if has_stat else 0
     outro      = int(FPS * 3.6)
 
-    body = total - brand_open - hero - outro
-    if body < len(lines) * MIN_SHOT_FRAMES:
-        brand_open = int(FPS * 1.6)
-        hero       = int(FPS * 3.0) if has_stat else 0
-        outro      = int(FPS * 2.6)
-        body       = max(total - brand_open - hero - outro, len(lines) * MIN_SHOT_FRAMES)
-
-    weights  = [max(len(l.split()), 2) for l in lines]
-    total_w  = sum(weights)
-    per_line = [max(int(body * w / total_w), MIN_SHOT_FRAMES) for w in weights]
-
-    drift = body - sum(per_line)
-    if drift:
-        per_line[per_line.index(max(per_line))] += drift
+    if seg_seconds:
+        # Narration drives the timing. The floor only guards against a clipped
+        # word on very short lines.
+        per_line = [max(int(round(s * FPS)), MIN_SHOT_FRAMES) for s in seg_seconds]
+    else:
+        words     = sum(len(l.split()) for l in lines)
+        estimated = max(words / 2.7, 12)
+        body      = max(int(estimated * FPS), len(lines) * MIN_SHOT_FRAMES)
+        weights   = [max(len(l.split()), 2) for l in lines]
+        total_w   = sum(weights)
+        per_line  = [max(int(body * w / total_w), MIN_SHOT_FRAMES) for w in weights]
 
     tone = story.get("tone", "signal")
     if tone not in VALID_TONES:
@@ -163,6 +124,9 @@ def build_content(story, audio_name, audio_seconds):
         "stat":      story.get("stat"),
         "lines":     lines,
         "audio":     audio_name,
+        # Narration covers the line shots only, so it starts after the cold
+        # open and the hero stat rather than at frame zero.
+        "audioFrom": brand_open + hero,
         "fps":       FPS,
         "brandOpen": brand_open,
         "hero":      hero,
@@ -228,16 +192,17 @@ def main():
         print(f"Stat:   {story['stat']['value']} — {story['stat'].get('caption','')}")
     print()
 
+    lines = split_sentences(story["text"])
+    if not lines:
+        die("Story text had no usable sentences.")
+
     audio_name = "narration.wav"
     print("Generating narration...")
-    seconds = narrate(story["text"], VIDEO_DIR / "public" / audio_name)
-    if seconds:
-        print(f"  {seconds:.1f}s\n")
-    else:
+    seg_seconds, total_seconds = narrate(lines, VIDEO_DIR / "public" / audio_name)
+    if not seg_seconds:
         audio_name = None
-        print("  (silent)\n")
 
-    content = build_content(story, audio_name, seconds)
+    content = build_content(story, lines, audio_name, seg_seconds)
     (VIDEO_DIR / "src" / "content.json").write_text(
         json.dumps(content, indent=2), encoding="utf-8")
 
