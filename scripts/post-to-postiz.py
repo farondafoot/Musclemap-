@@ -49,6 +49,7 @@ LOG_FILE = "output/post-log.jsonl"
 PLATFORM_SETTINGS = {
     "youtube":   {"__type": "youtube",   "title": "", "type": "public"},
     "instagram": {"__type": "instagram", "post_type": "reel"},
+    # (privacy for YouTube is overridden per-run by --privacy)
     "tiktok": {
         "__type":              "tiktok",
         "privacy_level":       "PUBLIC_TO_EVERYONE",
@@ -131,7 +132,7 @@ def get_channels():
     return result if isinstance(result, list) else result.get("integrations", [])
 
 
-def build_post(channel, media, captions, video_name):
+def build_post(channel, media, captions, video_name, privacy="public"):
     """Build one entry in the `posts` array for a single channel."""
     provider = (channel.get("providerIdentifier") or channel.get("provider") or "").lower()
     caption  = captions.get(provider) or captions.get("default") or ""
@@ -139,6 +140,10 @@ def build_post(channel, media, captions, video_name):
     settings = dict(PLATFORM_SETTINGS.get(provider, {}))
     if provider == "youtube":
         settings["title"] = f"MuscleMap — {video_name}"[:95]
+        settings["type"]  = privacy
+    elif provider == "tiktok" and privacy != "public":
+        # TikTok's equivalent of unlisted/private
+        settings["privacy_level"] = "SELF_ONLY"
 
     return {
         "integration": {"id": channel["id"]},
@@ -158,6 +163,10 @@ def main():
                         help="Comma-separated provider names, or 'all'")
     parser.add_argument("--when", default="now",
                         help="'now' or minutes from now, e.g. '30'")
+    parser.add_argument("--privacy", default="public",
+                        choices=["public", "unlisted", "private"],
+                        help="Visibility on upload. Use 'unlisted' to check a "
+                             "video on the platform before anyone sees it.")
     args = parser.parse_args()
 
     if not API_KEY:
@@ -211,10 +220,11 @@ def main():
         "date":      when.isoformat(),
         "shortLink": False,
         "tags":      [],
-        "posts":     [build_post(c, media, captions, video_name) for c in channels],
+        "posts":     [build_post(c, media, captions, video_name, args.privacy)
+                      for c in channels],
     }
 
-    print(f"Creating post ({post_type})...")
+    print(f"Creating post ({post_type}, {args.privacy})...")
     try:
         result = api("POST", "/posts", body=payload)
         for c in channels:
