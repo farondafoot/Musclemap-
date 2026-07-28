@@ -28,13 +28,19 @@ git clone https://github.com/gitroomhq/postiz-docker-compose
 cd postiz-docker-compose
 ```
 
-Open the `.env` (or `postiz.env`) file in that folder and set:
+Open `postiz.env` in that folder and set these. `DATABASE_URL` and `REDIS_URL`
+already point at the bundled Postgres/Redis containers — leave them alone.
 
 | Variable | Value for local use |
 |---|---|
-| `MAIN_URL` | `http://localhost:4007` |
+| `FRONTEND_URL` | `http://localhost:4007` |
 | `NEXT_PUBLIC_BACKEND_URL` | `http://localhost:4007/api` |
+| `BACKEND_INTERNAL_URL` | `http://localhost:3000` |
 | `JWT_SECRET` | any long random string |
+
+`FRONTEND_URL` and `NEXT_PUBLIC_BACKEND_URL` are what your *browser* uses;
+`BACKEND_INTERNAL_URL` is how the frontend container reaches the backend inside
+Docker's network, which is why it stays on port 3000.
 
 Then start it:
 
