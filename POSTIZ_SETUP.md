@@ -1,10 +1,24 @@
 # Postiz Setup — posting without Google Cloud Console
 
 Postiz is a self-hosted, open-source social scheduler (AGPL-3.0, ~32k stars).
-You connect YouTube / Instagram / TikTok by **clicking "Connect" in its web UI**.
-Postiz owns the OAuth apps, so you never touch Google Cloud Console, the Facebook
-Developer portal, or the TikTok dev portal. Your pipeline then posts with a
-single API key.
+Your pipeline posts to every connected channel with a single API key.
+
+## What self-hosting does and doesn't save you
+
+**It does not skip the developer consoles.** Postiz Cloud has OAuth apps
+pre-registered, but a self-hosted instance cannot use them — the OAuth redirect
+URI has to point at *your* address, so each provider needs its own app
+registered by you. YouTube still means Google Cloud Console. Provider setup
+guides live at <https://docs.postiz.com/providers/>.
+
+**What it does save**, and why it's still worth running:
+
+- Token refresh is handled — no re-authing dead credentials every few weeks
+- One upload fans out to every platform; no per-network posting code
+- Instagram needs no public video-hosting URL, since Postiz stores the file
+- Scheduling, retries, and a queue UI you can actually inspect
+
+The OAuth setup is one-time per platform. Everything after is one API call.
 
 ---
 
@@ -56,19 +70,44 @@ First boot pulls a few GB and takes a couple of minutes. Check progress with
 Open <http://localhost:4007>. Register — the first account on a fresh
 self-hosted instance is the owner. There's no email confirmation step locally.
 
-## 4. Connect your social accounts
+## 4. Register an OAuth app per platform
 
-Click **Add Channel**, pick YouTube, and complete the Google login popup. Repeat
-for Instagram and TikTok.
+Each provider needs its own app, and its credentials go in `postiz.env`
+before the "Add Channel" button will work. Restart with
+`docker compose up -d` after editing.
 
-Two notes on what the platforms themselves require, regardless of Postiz:
+### YouTube
+
+1. <https://console.cloud.google.com> → new project
+2. **APIs & Services → Library** → enable **YouTube Data API v3**,
+   **YouTube Analytics API**, and **YouTube Reporting API**
+3. **OAuth consent screen** → External → add yourself as a **Test user**
+   (required — the connect flow fails without it)
+4. **Credentials → Create Credentials → OAuth client ID → Web application**
+5. Authorized redirect URI — must match the port your browser uses:
+   ```
+   http://localhost:4007/integrations/social/youtube
+   ```
+   Adding the `:5000` variant too is harmless and covers the default compose
+   port mapping.
+6. Put the result in `postiz.env`:
+   ```
+   YOUTUBE_CLIENT_ID=...
+   YOUTUBE_CLIENT_SECRET=...
+   ```
+
+Then **Add Channel → YouTube** in the Postiz UI.
+
+### Platform constraints worth knowing up front
+
+These come from the platforms, not from Postiz:
 
 - **Instagram** only accepts API posts to a **Business or Creator** account
-  linked to a Facebook Page. A personal account will not connect. Switch it in
-  the Instagram app under Settings → Account type.
-- **TikTok** puts new API-connected apps in sandbox mode, where posts land as
-  private drafts until TikTok approves the app. Yours will still upload; you may
-  need to publish from the TikTok app until approval lands.
+  linked to a Facebook Page. Personal accounts cannot connect. Switch it in the
+  Instagram app under Settings → Account type.
+- **TikTok** keeps unapproved apps in sandbox, where posts arrive as private
+  drafts until TikTok reviews the app. Uploads still work; you publish from the
+  app until approval lands.
 
 ## 5. Copy your API key
 
