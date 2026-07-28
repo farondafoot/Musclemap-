@@ -71,16 +71,26 @@ try {
     Fail "Couldn't reach the Postiz API ($code). Is the container healthy? Try: docker logs postiz --tail 30"
 }
 
-$channels = @($resp)
+# Postiz wraps the list as {"value":[...], "Count":n}; older builds returned a
+# bare array. Unwrap whichever came back.
+$channels = @()
+if ($resp -is [array])      { $channels = $resp }
+elseif ($resp.value)        { $channels = @($resp.value) }
+elseif ($resp.integrations) { $channels = @($resp.integrations) }
+
 if ($channels.Count -eq 0) {
     Warn "The key works, but no channels are connected yet."
     Warn "Open http://localhost:4007 and click 'Add Channel' first."
 } else {
     Ok "Key valid. Connected channels:"
     foreach ($c in $channels) {
-        $name     = if ($c.name) { $c.name } else { "(unnamed)" }
-        $provider = if ($c.providerIdentifier) { $c.providerIdentifier } else { $c.provider }
-        Write-Host "      - $name  [$provider]" -ForegroundColor White
+        $name = if ($c.name) { $c.name } else { "(unnamed)" }
+        # Postiz calls the platform 'identifier'.
+        $provider = @($c.identifier, $c.providerIdentifier, $c.provider |
+                      Where-Object { $_ })[0]
+        if (-not $provider) { $provider = "?" }
+        $flag = if ($c.disabled) { "  (DISABLED)" } else { "" }
+        Write-Host "      - $name  [$provider]$flag" -ForegroundColor White
     }
 }
 

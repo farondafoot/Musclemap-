@@ -127,14 +127,43 @@ def upload_video(video_path):
 
 
 def get_channels():
-    """List connected social accounts."""
+    """
+    List connected social accounts.
+
+    Postiz returns {"value": [...], "Count": n}. Older/other builds have been
+    seen returning a bare list or an "integrations" key, so accept all shapes
+    rather than depending on one.
+    """
     result = api("GET", "/integrations")
-    return result if isinstance(result, list) else result.get("integrations", [])
+    if isinstance(result, list):
+        channels = result
+    else:
+        channels = []
+        for key in ("value", "integrations", "data"):
+            if isinstance(result.get(key), list):
+                channels = result[key]
+                break
+    # Disabled channels will reject posts; don't bother sending to them.
+    return [c for c in channels if not c.get("disabled")]
+
+
+def provider_of(channel):
+    """
+    The platform name for a channel, e.g. "youtube".
+
+    Postiz calls this `identifier`; some responses use `providerIdentifier`
+    or `provider`, so check each in turn.
+    """
+    for key in ("identifier", "providerIdentifier", "provider"):
+        value = channel.get(key)
+        if value:
+            return str(value).lower()
+    return ""
 
 
 def build_post(channel, media, captions, video_name, privacy="public"):
     """Build one entry in the `posts` array for a single channel."""
-    provider = (channel.get("providerIdentifier") or channel.get("provider") or "").lower()
+    provider = provider_of(channel)
     caption  = captions.get(provider) or captions.get("default") or ""
 
     settings = dict(PLATFORM_SETTINGS.get(provider, {}))
@@ -194,12 +223,12 @@ def main():
         wanted  = {c.strip().lower() for c in args.channels.split(",")}
         channels = [
             c for c in channels
-            if (c.get("providerIdentifier") or c.get("provider", "")).lower() in wanted
+            if provider_of(c) in wanted
         ]
         if not channels:
             sys.exit(f"None of the connected channels match: {args.channels}")
 
-    names = [f"{c.get('name', '?')} ({c.get('providerIdentifier', '?')})" for c in channels]
+    names = [f"{c.get('name', '?')} ({provider_of(c) or '?'})" for c in channels]
     print(f"Posting to {len(channels)} channel(s): {', '.join(names)}")
 
     # 2. Upload the video once — all channels reference the same media
@@ -228,14 +257,13 @@ def main():
     try:
         result = api("POST", "/posts", body=payload)
         for c in channels:
-            provider = c.get("providerIdentifier", "unknown")
-            log(provider, "ok", f"{BASE_URL}/launches")
+            log(provider_of(c) or "unknown", "ok", f"{BASE_URL}/launches")
         print(f"\nDone. Check {BASE_URL}/launches to see it.")
         if isinstance(result, dict) and result:
             print(f"Response: {json.dumps(result)[:300]}")
     except RuntimeError as e:
         for c in channels:
-            log(c.get("providerIdentifier", "unknown"), "failed", error=str(e))
+            log(provider_of(c) or "unknown", "failed", error=str(e))
         sys.exit(f"\nPost failed: {e}")
 
 
