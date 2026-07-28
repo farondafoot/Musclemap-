@@ -13,10 +13,12 @@ function Ok($m)   { Write-Host "[+] $m" -ForegroundColor Green }
 function Warn($m) { Write-Host "[!] $m" -ForegroundColor Yellow }
 function Fail($m) { Write-Host "[x] $m" -ForegroundColor Red; exit 1 }
 
-# Docker writes progress to stderr even on success; with ErrorActionPreference
-# = Stop that would surface as a terminating error. Relax it per call.
+# Docker writes progress to stderr even on success, which would surface as a
+# terminating error under ErrorActionPreference=Stop. Args are passed as ONE
+# array so flags like -d aren't parsed as PowerShell parameter names.
+# Call it as:  Invoke-Docker $someArray
 function Invoke-Docker {
-    param([Parameter(ValueFromRemainingArguments = $true)][string[]]$DockerArgs)
+    param([string[]]$DockerArgs)
 
     $prev = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
@@ -37,7 +39,8 @@ Set-Location $repoRoot
 Info "Reading Postiz config from the running container..."
 
 $backendUrl = "http://localhost:4007/api"
-$envResult  = Invoke-Docker exec postiz env
+$cmd        = @('exec', 'postiz', 'env')
+$envResult  = Invoke-Docker $cmd
 if ($envResult.ExitCode -eq 0) {
     $match = $envResult.Output -split "`n" | Select-String "^NEXT_PUBLIC_BACKEND_URL=(.+)$"
     if ($match) {

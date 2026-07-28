@@ -19,14 +19,21 @@ function Warn($m) { Write-Host "[!] $m" -ForegroundColor Yellow }
 function Fail($m) { Write-Host "[x] $m" -ForegroundColor Red; exit 1 }
 
 <#
-  The Docker CLI writes progress to stderr even on success. With
-  ErrorActionPreference=Stop, piping that into PowerShell turns ordinary output
-  into a terminating NativeCommandError. So every docker call goes through here,
-  which relaxes the preference just for the duration of the call and reports the
-  real result via the exit code.
+  Two PowerShell quirks make raw docker calls unreliable, so everything goes
+  through this helper:
+
+  1. The Docker CLI writes progress to stderr even on success. Piping that under
+     ErrorActionPreference=Stop turns ordinary output into a terminating
+     NativeCommandError. So the preference is relaxed for the call's duration.
+
+  2. Arguments like -d and --tail would be parsed as PowerShell parameter names
+     if passed bare. The caller therefore passes ONE array, whose elements are
+     always treated as plain strings, and it's splatted onto docker here.
+
+  Call it as:  Invoke-Docker $someArray
 #>
 function Invoke-Docker {
-    param([Parameter(ValueFromRemainingArguments = $true)][string[]]$DockerArgs)
+    param([string[]]$DockerArgs)
 
     $prev = $ErrorActionPreference
     $ErrorActionPreference = "Continue"
@@ -42,7 +49,8 @@ function Invoke-Docker {
 # ── 1. Locate the running Postiz stack ─────────────────────────────────────
 Info "Locating your Postiz stack..."
 
-$inspect = Invoke-Docker inspect postiz
+$cmd     = @('inspect', 'postiz')
+$inspect = Invoke-Docker $cmd
 if ($inspect.ExitCode -ne 0) {
     Fail "No container named 'postiz' found, or Docker isn't running.`n$($inspect.Output)"
 }
@@ -54,7 +62,7 @@ try {
 }
 
 $workingDir = $meta[0].Config.Labels."com.docker.compose.project.working_dir"
-if (-not $workingDir)            { Fail "Postiz isn't managed by docker compose; can't add env vars automatically." }
+if (-not $workingDir)             { Fail "Postiz isn't managed by docker compose; can't add env vars automatically." }
 if (-not (Test-Path $workingDir)) { Fail "Compose directory no longer exists: $workingDir" }
 
 Ok "Found stack at: $workingDir"
@@ -66,7 +74,7 @@ $clientId     = $null
 $clientSecret = $null
 
 if (Test-Path $overridePath) {
-    $existing = Get-Content $overridePath -Raw
+    $existing    = Get-Content $overridePath -Raw
     $idMatch     = [regex]::Match($existing, 'YOUTUBE_CLIENT_ID:\s*"([^"]+)"')
     $secretMatch = [regex]::Match($existing, 'YOUTUBE_CLIENT_SECRET:\s*"([^"]+)"')
 
@@ -126,7 +134,8 @@ Info "Restarting Postiz with the new credentials..."
 
 Push-Location $workingDir
 try {
-    $up = Invoke-Docker compose up -d postiz
+    $cmd = @('compose', 'up', '-d', 'postiz')
+    $up  = Invoke-Docker $cmd
     Write-Host $up.Output -ForegroundColor DarkGray
     if ($up.ExitCode -ne 0) { Fail "docker compose failed. See output above." }
 } finally {
@@ -136,23 +145,31 @@ try {
 # ── 5. Wait for the backend to actually come up ────────────────────────────
 Info "Waiting for the backend to finish booting (this takes a minute or two)..."
 
+$logCmd        = @('logs', 'postiz', '--tail', '40')
 $ready         = $false
 $temporalFixed = $false
 
 foreach ($i in 1..40) {
     Start-Sleep -Seconds 5
-    $logs = (Invoke-Docker logs postiz --tail 40).Output
+    $logs = (Invoke-Docker $logCmd).Output
 
     if ($logs -match "Backend started successfully") { $ready = $true; break }
 
     # Postiz needs Temporal; if those containers are down the backend won't boot.
     if (-not $temporalFixed -and $logs -match "Name resolution failed for target dns:temporal") {
         Warn "Backend can't reach Temporal. Starting those containers in order..."
-        Invoke-Docker start temporal-postgresql temporal-elasticsearch | Out-Null
+
+        $c = @('start', 'temporal-postgresql', 'temporal-elasticsearch')
+        Invoke-Docker $c | Out-Null
         Start-Sleep -Seconds 20
-        Invoke-Docker start temporal | Out-Null
+
+        $c = @('start', 'temporal')
+        Invoke-Docker $c | Out-Null
         Start-Sleep -Seconds 20
-        Invoke-Docker restart postiz | Out-Null
+
+        $c = @('restart', 'postiz')
+        Invoke-Docker $c | Out-Null
+
         $temporalFixed = $true
         Info "Temporal started. Waiting on the backend again..."
         continue
