@@ -1,107 +1,110 @@
 import React from 'react';
 import { AbsoluteFill, interpolate, spring, useCurrentFrame, useVideoConfig } from 'remotion';
-import { theme, glow } from '../theme';
+import { theme, glow, toneColor, Tone, BRAND } from '../theme';
 import { Backdrop } from '../components/Chrome';
+import { NodeGraph } from '../components/NodeGraph';
 
 /**
- * Brand open. Wordmark stamps in, holds fully on for a beat, then hands off.
- * The hold is deliberate: cutting the moment the logo lands reads as a glitch.
+ * Cold open. Wordmark stamps in and holds fully on for a beat before handing
+ * off — cutting the instant it lands reads as a glitch.
  */
-export const BrandOpen: React.FC<{ hook?: string }> = ({ hook }) => {
+export const BrandOpen: React.FC<{
+  kicker?: string;
+  date?: string;
+  tone?: Tone;
+}> = ({ kicker, date, tone = 'signal' }) => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames } = useVideoConfig();
+  const color = toneColor(tone);
 
-  const stamp = spring({
-    frame,
-    fps,
-    config: { damping: 200, stiffness: 90, mass: 0.9 },
-  });
-
-  const scale   = interpolate(stamp, [0, 1], [1.35, 1]);
+  const stamp   = spring({ frame, fps, config: { damping: 200, stiffness: 90, mass: 0.9 } });
+  const scale   = interpolate(stamp, [0, 1], [1.28, 1]);
+  const blur    = interpolate(stamp, [0, 1], [12, 0]);
   const opacity = interpolate(frame, [0, 10], [0, 1], { extrapolateRight: 'clamp' });
-  const blur    = interpolate(stamp, [0, 1], [14, 0]);
 
-  // Underline sweeps out from under the wordmark once it has landed
-  const rule = spring({
-    frame:  frame - 16,
-    fps,
-    config: { damping: 200, stiffness: 70, mass: 1 },
-  });
+  const rule    = spring({ frame: frame - 14, fps, config: { damping: 200, stiffness: 70, mass: 1 } });
+  const kickIn  = spring({ frame: frame - 28, fps, config: { damping: 200, stiffness: 100, mass: 0.7 } });
 
-  // Hand-off: whole lockup lifts and dims on the way out
-  const exitStart = durationInFrames - 14;
-  const exit = interpolate(frame, [exitStart, durationInFrames], [0, 1], {
+  const exit = interpolate(frame, [durationInFrames - 12, durationInFrames], [0, 1], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
-  });
-
-  const hookIn = spring({
-    frame:  frame - 30,
-    fps,
-    config: { damping: 200, stiffness: 100, mass: 0.7 },
   });
 
   return (
     <AbsoluteFill>
-      <Backdrop />
+      <Backdrop tone={tone} />
+
+      <AbsoluteFill style={{ justifyContent: 'center', alignItems: 'center', opacity: 0.18 }}>
+        <NodeGraph intensity={0.55} tone={tone} startAt={4} scale={1.5} />
+      </AbsoluteFill>
+
       <AbsoluteFill
         style={{
-          justifyContent: 'center',
-          alignItems:     'center',
-          transform:      `translateY(${exit * -60}px)`,
-          opacity:        1 - exit * 0.4,
+          justifyContent: 'center', alignItems: 'center',
+          transform: `translateY(${exit * -50}px)`, opacity: 1 - exit * 0.35,
         }}
       >
         <div
           style={{
-            transform:  `scale(${scale})`,
-            opacity,
-            filter:     blur > 0.4 ? `blur(${blur}px)` : 'none',
-            textAlign:  'center',
+            transform: `scale(${scale})`, opacity, textAlign: 'center',
+            filter: blur > 0.4 ? `blur(${blur}px)` : 'none',
           }}
         >
           <div
             style={{
-              fontFamily:    theme.font,
-              fontSize:      124,
-              fontWeight:    900,
-              letterSpacing: '-0.045em',
-              color:         theme.t1,
-              textShadow:    glow(theme.accent, 0.8),
+              fontFamily: theme.font, fontSize: 96, fontWeight: 900,
+              letterSpacing: '-0.045em', color: theme.t1, lineHeight: 1.02,
             }}
           >
-            Muscle<span style={{ color: theme.accent }}>Map</span>
+            {BRAND.name}
+          </div>
+          <div
+            style={{
+              fontFamily: theme.font, fontSize: 96, fontWeight: 900,
+              letterSpacing: '-0.045em', color, lineHeight: 1.02,
+              textShadow: glow(color, 0.9),
+            }}
+          >
+            {BRAND.name2}
           </div>
 
           <div
             style={{
-              height:          5,
-              marginTop:       22,
-              marginLeft:      'auto',
-              marginRight:     'auto',
-              width:           `${interpolate(rule, [0, 1], [0, 62])}%`,
-              backgroundColor: theme.accent,
-              borderRadius:    3,
-              boxShadow:       `0 0 20px ${theme.accent}aa`,
+              height: 5, marginTop: 26, marginLeft: 'auto', marginRight: 'auto',
+              width: `${interpolate(rule, [0, 1], [0, 58])}%`,
+              backgroundColor: color, borderRadius: 3,
+              boxShadow: `0 0 20px ${color}aa`,
             }}
           />
         </div>
 
-        {hook ? (
-          <div
-            style={{
-              marginTop:     40,
-              fontFamily:    theme.mono,
-              fontSize:      26,
-              letterSpacing: '0.22em',
-              textTransform: 'uppercase',
-              color:         theme.t2,
-              opacity:       hookIn,
-              transform:     `translateY(${interpolate(hookIn, [0, 1], [18, 0])}px)`,
-            }}
-          >
-            {hook}
-          </div>
-        ) : null}
+        <div
+          style={{
+            marginTop: 44, textAlign: 'center',
+            opacity: kickIn,
+            transform: `translateY(${interpolate(kickIn, [0, 1], [18, 0])}px)`,
+          }}
+        >
+          {date ? (
+            <div
+              style={{
+                fontFamily: theme.mono, fontSize: 24, letterSpacing: '0.2em',
+                color: theme.t3, marginBottom: 10,
+              }}
+            >
+              {date}
+            </div>
+          ) : null}
+          {kicker ? (
+            <div
+              style={{
+                fontFamily: theme.mono, fontSize: 26, letterSpacing: '0.2em',
+                textTransform: 'uppercase', color: theme.t2,
+              }}
+            >
+              {kicker}
+            </div>
+          ) : null}
+        </div>
       </AbsoluteFill>
     </AbsoluteFill>
   );

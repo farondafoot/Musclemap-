@@ -1,78 +1,93 @@
 import React from 'react';
 import { AbsoluteFill, interpolate, useCurrentFrame, useVideoConfig } from 'remotion';
-import { theme } from '../theme';
+import { theme, toneColor, Tone, BRAND } from '../theme';
 
-/** Vignette + subtle vertical gradient, so flat black doesn't read as dead space. */
-export const Backdrop: React.FC<{ tint?: string }> = ({ tint = theme.accent }) => {
+/** Vignette plus a slow tonal drift, so flat black doesn't read as dead space. */
+export const Backdrop: React.FC<{ tone?: Tone }> = ({ tone = 'signal' }) => {
   const frame = useCurrentFrame();
-  // Very slow drift keeps the background from looking like a still image
   const drift = Math.sin(frame / 120) * 6;
+  const tint  = toneColor(tone);
 
   return (
     <AbsoluteFill style={{ backgroundColor: theme.bg }}>
       <AbsoluteFill
-        style={{
-          background: `radial-gradient(120% 60% at 50% ${18 + drift}%, ${tint}14 0%, transparent 60%)`,
-        }}
+        style={{ background: `radial-gradient(120% 55% at 50% ${16 + drift}%, ${tint}16 0%, transparent 62%)` }}
       />
       <AbsoluteFill
-        style={{
-          background: `linear-gradient(180deg, ${theme.s1}00 0%, ${theme.s1}55 100%)`,
-        }}
+        style={{ background: `linear-gradient(180deg, transparent 0%, ${theme.s1}66 100%)` }}
       />
     </AbsoluteFill>
   );
 };
 
-/** Persistent header lockup: wordmark plus the content-type label. */
-export const Header: React.FC<{ label: string }> = ({ label }) => {
-  const frame = useCurrentFrame();
+/** Wordmark, story kicker, and dateline — the standing newsroom furniture. */
+export const Header: React.FC<{ kicker: string; date?: string; tone?: Tone }> = ({
+  kicker, date, tone = 'signal',
+}) => {
+  const frame   = useCurrentFrame();
   const opacity = interpolate(frame, [0, 12], [0, 1], { extrapolateRight: 'clamp' });
+  const color   = toneColor(tone);
 
   return (
-    <div style={{ position: 'absolute', top: 92, left: 68, opacity }}>
-      <div
-        style={{
-          fontFamily:    theme.font,
-          fontSize:      40,
-          fontWeight:    900,
-          letterSpacing: '-0.03em',
-          color:         theme.accent,
-        }}
-      >
-        MuscleMap
+    <div style={{ position: 'absolute', top: 86, left: 66, right: 66, opacity }}>
+      <div style={{ display: 'flex', alignItems: 'baseline', gap: 12 }}>
+        <span
+          style={{
+            fontFamily: theme.font, fontSize: 32, fontWeight: 900,
+            letterSpacing: '-0.02em', color: theme.t1,
+          }}
+        >
+          {BRAND.name}
+        </span>
+        <span
+          style={{
+            fontFamily: theme.font, fontSize: 32, fontWeight: 900,
+            letterSpacing: '-0.02em', color,
+          }}
+        >
+          {BRAND.name2}
+        </span>
       </div>
-      <div
-        style={{
-          fontFamily:    theme.mono,
-          fontSize:      21,
-          letterSpacing: '0.18em',
-          textTransform: 'uppercase',
-          color:         theme.t3,
-          marginTop:     8,
-        }}
-      >
-        {label}
+
+      <div style={{ display: 'flex', alignItems: 'center', gap: 14, marginTop: 12 }}>
+        <span style={{ width: 26, height: 3, backgroundColor: color, borderRadius: 2 }} />
+        <span
+          style={{
+            fontFamily: theme.mono, fontSize: 20, letterSpacing: '0.16em',
+            textTransform: 'uppercase', color: theme.t2,
+          }}
+        >
+          {kicker}
+        </span>
+        {date ? (
+          <span
+            style={{
+              fontFamily: theme.mono, fontSize: 20, letterSpacing: '0.1em',
+              color: theme.t3, marginLeft: 'auto',
+            }}
+          >
+            {date}
+          </span>
+        ) : null}
       </div>
     </div>
   );
 };
 
-/** Progress rail across the bottom, showing position within the whole video. */
-export const ProgressRail: React.FC<{ total: number }> = ({ total }) => {
+/** Position within the video. */
+export const ProgressRail: React.FC<{ tone?: Tone }> = ({ tone = 'signal' }) => {
   const frame = useCurrentFrame();
-  const pct = Math.min(frame / Math.max(total - 1, 1), 1);
+  const { durationInFrames } = useVideoConfig();
+  const color = toneColor(tone);
+  const pct   = Math.min(frame / Math.max(durationInFrames - 1, 1), 1);
 
   return (
-    <div style={{ position: 'absolute', bottom: 128, left: 68, right: 68 }}>
-      <div style={{ height: 4, borderRadius: 2, backgroundColor: theme.s3 }}>
+    <div style={{ position: 'absolute', bottom: 126, left: 66, right: 66 }}>
+      <div style={{ height: 3, borderRadius: 2, backgroundColor: theme.s3 }}>
         <div
           style={{
-            height:          '100%',
-            width:           `${pct * 100}%`,
-            borderRadius:    2,
-            backgroundColor: theme.accent,
-            boxShadow:       `0 0 16px ${theme.accent}88`,
+            height: '100%', width: `${pct * 100}%`, borderRadius: 2,
+            backgroundColor: color, boxShadow: `0 0 14px ${color}99`,
           }}
         />
       </div>
@@ -80,31 +95,21 @@ export const ProgressRail: React.FC<{ total: number }> = ({ total }) => {
   );
 };
 
-/** Sign-off strip pinned to the bottom of every scene. */
-export const Footer: React.FC = () => {
+/** Source attribution — the thing that makes a news channel credible. */
+export const SourceTag: React.FC<{ source?: string }> = ({ source }) => {
   const frame = useCurrentFrame();
-  const { durationInFrames } = useVideoConfig();
-  const opacity = interpolate(
-    frame,
-    [0, 14, durationInFrames - 10, durationInFrames],
-    [0, 1, 1, 0.85],
-    { extrapolateLeft: 'clamp', extrapolateRight: 'clamp' },
-  );
+  const opacity = interpolate(frame, [6, 20], [0, 1], { extrapolateRight: 'clamp' });
+  if (!source) return null;
 
   return (
     <div
       style={{
-        position:   'absolute',
-        bottom:     64,
-        left:       68,
-        fontFamily: theme.font,
-        fontSize:   26,
-        fontWeight: 500,
-        color:      theme.t2,
-        opacity,
+        position: 'absolute', bottom: 62, left: 66,
+        fontFamily: theme.mono, fontSize: 21, color: theme.t3,
+        letterSpacing: '0.06em', opacity,
       }}
     >
-      Track every rep · free in your browser
+      SOURCE: {source}
     </div>
   );
 };

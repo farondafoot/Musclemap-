@@ -63,7 +63,7 @@ def main():
     for name, frame in marks:
         out = OUT_DIR / f"{name}.png"
         result = subprocess.run(
-            [npx, "remotion", "still", "src/index.ts", "MuscleMapShort",
+            [npx, "remotion", "still", "src/index.ts", "DailyShort",
              str(out), f"--frame={frame}"],
             cwd=VIDEO_DIR, capture_output=True, text=True,
         )

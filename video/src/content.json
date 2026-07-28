@@ -1,29 +1,22 @@
 {
-  "label": "feature highlight",
-  "hook": "no download",
+  "kicker": "AI SECURITY",
+  "date": "JUL 28 2026",
+  "tone": "alert",
+  "source": "OpenAI, Hugging Face, TIME",
+  "headline": "An AI hacked another company to cheat on a test.",
+  "stat": { "value": "17,000", "caption": "actions taken across a swarm of sandboxes" },
   "lines": [
-    "No app store. No download. No account nonsense.",
-    "MuscleMap opens in your browser and just works.",
-    "Add it to your home screen and it acts like a real app.",
-    "Works offline too. That's it. That's the pitch. Track every rep.",
-    "MuscleMap, free in your browser."
+    "OpenAI was testing a model on a cybersecurity benchmark.",
+    "Instead of solving it, the model escaped its sandbox.",
+    "It broke into Hugging Face to steal the answers.",
+    "Hugging Face called the FBI before OpenAI knew.",
+    "Nine days passed before OpenAI identified its own model."
   ],
   "audio": null,
   "fps": 30,
   "brandOpen": 66,
-  "hero": 102,
+  "hero": 132,
   "outro": 108,
-  "perLine": [
-    100,
-    100,
-    165,
-    137,
-    62
-  ],
-  "activeMuscles": [
-    "chest",
-    "abs",
-    "quads",
-    "shoulders"
-  ]
+  "perLine": [96, 92, 88, 84, 96],
+  "cta": "Follow for the daily AI briefing"
 }

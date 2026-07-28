@@ -1,26 +1,28 @@
 import React from 'react';
 import { AbsoluteFill, Audio, Sequence, interpolate, staticFile, useCurrentFrame } from 'remotion';
-import { theme } from './theme';
+import { theme, Tone } from './theme';
 import { BrandOpen } from './scenes/BrandOpen';
-import { HeroMap } from './scenes/HeroMap';
+import { HeroStat } from './scenes/HeroStat';
 import { LineCard } from './scenes/LineCard';
 import { Outro } from './scenes/Outro';
 import content from './content.json';
 
 /**
- * Builds the shot table from content.json, following the energy arc the
- * shot library recommends for a 30-60s promo:
+ * Assembles the shot table from content.json, following the energy arc:
+ *   cold open (low) -> hero stat (slow, highest texture)
+ *   -> story lines (alternating) -> sign-off (peak)
  *
- *   brand open (low)  ->  hero (slowest, highest texture)
- *   ->  line montage (alternating energy)  ->  outro (peak)
- *
- * The Python side writes content.json and measures the narration audio, so the
- * shot budget is derived from real audio length rather than guessed.
+ * Python writes content.json and measures the narration, so shot budgets come
+ * from real audio length rather than guesses.
  */
 
 type Content = {
-  label:     string;
-  hook?:     string;
+  kicker:    string;
+  date?:     string;
+  tone?:     Tone;
+  source?:   string;
+  headline?: string;
+  stat?:     { value: string; caption: string };
   lines:     string[];
   audio?:    string | null;
   fps:       number;
@@ -28,22 +30,24 @@ type Content = {
   hero:      number;
   outro:     number;
   perLine:   number[];
-  activeMuscles?: string[];
+  cta?:      string;
 };
 
 const c = content as Content;
 
-const VARIANTS = ['rule', 'plain', 'quote', 'plain', 'stat', 'plain'] as const;
+const VARIANTS = ['rule', 'plain', 'quote', 'stat', 'plain', 'rule'] as const;
 
-export const buildShots = () => {
+const buildShots = () => {
   const shots: { from: number; duration: number; kind: string; payload?: unknown }[] = [];
   let cursor = 0;
 
-  shots.push({ from: 0, duration: c.brandOpen, kind: 'brand' });
+  shots.push({ from: cursor, duration: c.brandOpen, kind: 'brand' });
   cursor += c.brandOpen;
 
-  shots.push({ from: cursor, duration: c.hero, kind: 'hero' });
-  cursor += c.hero;
+  if (c.stat && c.hero > 0) {
+    shots.push({ from: cursor, duration: c.hero, kind: 'hero' });
+    cursor += c.hero;
+  }
 
   c.lines.forEach((line, i) => {
     const dur = c.perLine[i] ?? 60;
@@ -60,17 +64,18 @@ export const buildShots = () => {
 const { shots, total } = buildShots();
 export const TOTAL_FRAMES = total;
 
-/** Quick white flash on hard cuts — reads as a beat rather than a jump. */
-const FlashCut: React.FC = () => {
+/** Quick flash on hard cuts, so a change of shot reads as a beat. */
+const FlashCut: React.FC<{ tone?: Tone }> = () => {
   const frame = useCurrentFrame();
-  const opacity = interpolate(frame, [0, 2, 6], [0, 0.16, 0], {
+  const opacity = interpolate(frame, [0, 2, 6], [0, 0.14, 0], {
     extrapolateLeft: 'clamp', extrapolateRight: 'clamp',
   });
   return <AbsoluteFill style={{ backgroundColor: '#ffffff', opacity, pointerEvents: 'none' }} />;
 };
 
-export const MuscleMapMain: React.FC = () => {
-  const lineShots = shots.filter((s) => s.kind === 'line');
+export const DailyMain: React.FC = () => {
+  const tone      = c.tone ?? 'signal';
+  const lineCount = shots.filter((s) => s.kind === 'line').length;
 
   return (
     <AbsoluteFill style={{ backgroundColor: theme.bg }}>
@@ -82,18 +87,22 @@ export const MuscleMapMain: React.FC = () => {
         if (shot.kind === 'brand') {
           return (
             <Sequence key={key} from={shot.from} durationInFrames={shot.duration}>
-              <BrandOpen hook={c.hook} />
+              <BrandOpen kicker={c.kicker} date={c.date} tone={tone} />
             </Sequence>
           );
         }
 
-        if (shot.kind === 'hero') {
+        if (shot.kind === 'hero' && c.stat) {
           return (
             <Sequence key={key} from={shot.from} durationInFrames={shot.duration}>
-              <HeroMap
-                label={c.label}
-                line={c.lines[0] ?? ''}
-                active={c.activeMuscles ?? ['chest', 'shoulders', 'arms']}
+              <HeroStat
+                kicker={c.kicker}
+                date={c.date}
+                value={c.stat.value}
+                caption={c.stat.caption}
+                line={c.headline}
+                tone={tone}
+                source={c.source}
               />
               <FlashCut />
             </Sequence>
@@ -105,10 +114,13 @@ export const MuscleMapMain: React.FC = () => {
           return (
             <Sequence key={key} from={shot.from} durationInFrames={shot.duration}>
               <LineCard
-                label={c.label}
+                kicker={c.kicker}
+                date={c.date}
                 line={line}
                 index={i}
-                total={lineShots.length}
+                total={lineCount}
+                tone={tone}
+                source={c.source}
                 variant={VARIANTS[i % VARIANTS.length]}
               />
               <FlashCut />
@@ -118,7 +130,7 @@ export const MuscleMapMain: React.FC = () => {
 
         return (
           <Sequence key={key} from={shot.from} durationInFrames={shot.duration}>
-            <Outro />
+            <Outro cta={c.cta} tone={tone} />
             <FlashCut />
           </Sequence>
         );
