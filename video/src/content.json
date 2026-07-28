@@ -1,19 +1,29 @@
 {
-  "label": "workout tip",
-  "hook": "progressive overload",
+  "label": "feature highlight",
+  "hook": "no download",
   "lines": [
-    "You've benched 135 for eight months.",
-    "That's not training. That's a hobby.",
-    "Muscle grows when you force it to.",
-    "Add five pounds. Every single week.",
-    "MuscleMap shows the exact weight you lifted last time.",
-    "Track every rep. MuscleMap, free in your browser."
+    "No app store. No download. No account nonsense.",
+    "MuscleMap opens in your browser and just works.",
+    "Add it to your home screen and it acts like a real app.",
+    "Works offline too. That's it. That's the pitch. Track every rep.",
+    "MuscleMap, free in your browser."
   ],
   "audio": null,
   "fps": 30,
   "brandOpen": 66,
   "hero": 102,
   "outro": 108,
-  "perLine": [92, 78, 88, 78, 118, 116],
-  "activeMuscles": ["chest", "shoulders", "arms"]
+  "perLine": [
+    100,
+    100,
+    165,
+    137,
+    62
+  ],
+  "activeMuscles": [
+    "chest",
+    "abs",
+    "quads",
+    "shoulders"
+  ]
 }

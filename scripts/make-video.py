@@ -150,9 +150,46 @@ def narrate(text, out_path):
 
 # ── 3. Shot budget ─────────────────────────────────────────────────────────
 
+MIN_SHOT_FRAMES = 42   # ~1.4s — below this a line is gone before it can be read
+MERGE_UNDER     = 5    # fragments this short get joined to a neighbour
+MAX_SHOT_WORDS  = 11   # above this the copy overflows the lower-third block
+
+
 def split_sentences(text):
+    """
+    Split narration into one line per shot.
+
+    Punchy writing produces very short sentences ("Face pulls." "Twenty reps.")
+    and giving each its own shot yields one-second cuts that read as staccato
+    rather than emphatic. Short fragments are merged with a neighbour so every
+    shot carries enough to be read, which also keeps the closing CTA
+    ("Track every rep. MuscleMap, free in your browser.") on a single card.
+    """
     parts = [s.strip() for s in re.split(r"(?<=[.!?])\s+", text.strip()) if s.strip()]
-    return [p for p in parts if len(p) > 3]
+    parts = [p for p in parts if len(p) > 3]
+    if not parts:
+        return []
+
+    def joinable(existing: str, addition: str) -> bool:
+        """Merge only while the result still fits on one card."""
+        return len(existing.split()) + len(addition.split()) <= MAX_SHOT_WORDS
+
+    merged: list[str] = []
+    for part in parts:
+        short_part = len(part.split()) < MERGE_UNDER
+        short_prev = bool(merged) and len(merged[-1].split()) < MERGE_UNDER
+
+        if merged and (short_part or short_prev) and joinable(merged[-1], part):
+            merged[-1] = f"{merged[-1]} {part}"
+        else:
+            merged.append(part)
+
+    # A trailing fragment has no following neighbour to absorb it. Accept going
+    # slightly over the cap here rather than leaving a one-word final shot.
+    if len(merged) > 1 and len(merged[-1].split()) < MERGE_UNDER:
+        merged[-2] = f"{merged[-2]} {merged.pop()}"
+
+    return merged
 
 
 def build_content(content_type, script, audio_name, audio_seconds):
@@ -172,16 +209,17 @@ def build_content(content_type, script, audio_name, audio_seconds):
     outro      = int(FPS * 3.6)   # peak, plus a held sign-off
 
     body = total_frames - brand_open - hero - outro
-    if body < len(lines) * 30:
+    if body < len(lines) * MIN_SHOT_FRAMES:
         # Narration is short; give the framing shots less room
         brand_open = int(FPS * 1.6)
         hero       = int(FPS * 2.4)
         outro      = int(FPS * 2.6)
-        body       = max(total_frames - brand_open - hero - outro, len(lines) * 30)
+        body       = max(total_frames - brand_open - hero - outro,
+                         len(lines) * MIN_SHOT_FRAMES)
 
     weights   = [max(len(l.split()), 2) for l in lines]
     total_w   = sum(weights)
-    per_line  = [max(int(body * w / total_w), 30) for w in weights]
+    per_line  = [max(int(body * w / total_w), MIN_SHOT_FRAMES) for w in weights]
 
     # Absorb rounding drift into the longest shot
     drift = body - sum(per_line)
@@ -234,9 +272,29 @@ def main():
     ap.add_argument("--id", help="Render a specific script id, e.g. wt-003")
     ap.add_argument("--ollama", action="store_true",
                     help="Generate with the local model instead of the written library")
+    ap.add_argument("--text",
+                    help="Narration to render, instead of picking from the library. "
+                         "Sentences are split on punctuation, one per shot.")
+    ap.add_argument("--text-file",
+                    help="Read the narration from a file (avoids shell quoting pain).")
+    ap.add_argument("--hook", default="",
+                    help="Short label shown under the wordmark on the opening shot.")
+    ap.add_argument("--muscles",
+                    help="Comma-separated groups to light on the hero shot, e.g. "
+                         "back,glutes,quads. Defaults per content type.")
     args = ap.parse_args()
 
-    script = script_from_ollama(args.type) if args.ollama else pick_script(args.type, args.id)
+    if args.text_file:
+        body = Path(args.text_file).read_text(encoding="utf-8").strip()
+        if not body:
+            die(f"{args.text_file} is empty")
+        script = {"id": "custom", "hook": args.hook, "text": body}
+    elif args.text:
+        script = {"id": "custom", "hook": args.hook, "text": args.text.strip()}
+    elif args.ollama:
+        script = script_from_ollama(args.type)
+    else:
+        script = pick_script(args.type, args.id)
     print(f"Script: {script['id']} — {script.get('hook', '')}")
     print(f"  {script['text'][:110]}...\n")
 
@@ -247,6 +305,8 @@ def main():
     print(f"  {seconds:.1f}s\n")
 
     content = build_content(args.type, script, audio_name, seconds)
+    if args.muscles:
+        content["activeMuscles"] = [m.strip() for m in args.muscles.split(",") if m.strip()]
     (VIDEO_DIR / "src" / "content.json").write_text(
         json.dumps(content, indent=2), encoding="utf-8")
 
