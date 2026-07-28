@@ -1,0 +1,35 @@
+# Orca project configuration for MuscleMap
+# Install Orca at https://www.onorca.dev — then open this repo inside it.
+
+project:
+  name: MuscleMap
+  description: Fitness tracker — content pipeline, video creation, social auto-posting
+  default_branch: main
+
+agents:
+  # Primary coding agent uses Claude Code (your subscription)
+  # Switch to "opencode" + Ollama for free local inference
+  preferred: claude-code
+  fallback: opencode          # OpenCode supports Ollama via --model ollama/<name>
+
+  # Ollama runs locally on port 11434.
+  # Start it with: ollama serve
+  # Pull models with: ollama pull llama3.2
+  ollama:
+    base_url: http://localhost:11434/v1
+    default_model: llama3.2
+    coding_model: qwen2.5-coder:7b
+    content_model: llama3.2
+
+skills:
+  - create-musclemap-video
+  - post-to-social
+  - nightly-pipeline
+
+automations:
+  # Runs every night at 11pm — agents create and post content while you sleep
+  nightly_content:
+    schedule: "0 23 * * *"
+    skill: nightly-pipeline
+    agent: opencode
+    model: ollama/llama3.2

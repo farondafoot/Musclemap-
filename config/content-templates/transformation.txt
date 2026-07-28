@@ -1,0 +1,15 @@
+You're writing a motivational transformation-style script for MuscleMap.
+
+Frame: someone who used to skip leg day, never tracked their workouts, and
+plateaued for years — until they started being intentional about tracking.
+
+Don't be generic ("consistency is key!"). Be specific and a bit uncomfortable:
+- Call out the exact lazy habits (doing the same weight for 8 months)
+- Name the mindset shift (tracking makes you face the truth)
+- Give a concrete before/after (couldn't bench 135 → now doing 185)
+
+MuscleMap's role: the tool that made the data visible and stopped the guessing.
+
+This should feel like a real person talking, not an ad. Short, punchy,
+slightly self-deprecating humour is fine. Aim for that "okay I felt that"
+reaction.
