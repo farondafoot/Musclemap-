@@ -13,6 +13,22 @@ function Ok($m)   { Write-Host "[+] $m" -ForegroundColor Green }
 function Warn($m) { Write-Host "[!] $m" -ForegroundColor Yellow }
 function Fail($m) { Write-Host "[x] $m" -ForegroundColor Red; exit 1 }
 
+# Docker writes progress to stderr even on success; with ErrorActionPreference
+# = Stop that would surface as a terminating error. Relax it per call.
+function Invoke-Docker {
+    param([Parameter(ValueFromRemainingArguments = $true)][string[]]$DockerArgs)
+
+    $prev = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+        $output = & docker @DockerArgs 2>&1 | Out-String
+        $code   = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $prev
+    }
+    return [pscustomobject]@{ Output = $output; ExitCode = $code }
+}
+
 # Run from the repo root regardless of where the user invoked it
 $repoRoot = Split-Path -Parent $PSScriptRoot
 Set-Location $repoRoot
@@ -21,14 +37,14 @@ Set-Location $repoRoot
 Info "Reading Postiz config from the running container..."
 
 $backendUrl = "http://localhost:4007/api"
-try {
-    $envLines = docker exec postiz env 2>$null
-    $match = $envLines | Select-String "^NEXT_PUBLIC_BACKEND_URL=(.+)$"
+$envResult  = Invoke-Docker exec postiz env
+if ($envResult.ExitCode -eq 0) {
+    $match = $envResult.Output -split "`n" | Select-String "^NEXT_PUBLIC_BACKEND_URL=(.+)$"
     if ($match) {
         $backendUrl = $match.Matches[0].Groups[1].Value.Trim()
         Ok "Backend URL: $backendUrl"
     }
-} catch {
+} else {
     Warn "Couldn't read the container env; assuming $backendUrl"
 }
 

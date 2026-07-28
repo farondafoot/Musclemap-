@@ -5,67 +5,109 @@
   the Google OAuth app, because that requires your Google login and consent.
 
   Usage:
-      py -3 --version   # (unrelated, just checking you're in PowerShell)
       .\scripts\setup-youtube.ps1
 
-  It will prompt for the Client ID and Secret, then handle the rest:
-  locating your compose project, adding the env vars, restarting Postiz, and
-  waiting until the backend is actually healthy again.
+  Safe to re-run. If credentials are already saved it offers to reuse them
+  rather than making you paste again.
 #>
 
 $ErrorActionPreference = "Stop"
 
-function Info($m)  { Write-Host "[*] $m" -ForegroundColor Cyan }
-function Ok($m)    { Write-Host "[+] $m" -ForegroundColor Green }
-function Warn($m)  { Write-Host "[!] $m" -ForegroundColor Yellow }
-function Fail($m)  { Write-Host "[x] $m" -ForegroundColor Red; exit 1 }
+function Info($m) { Write-Host "[*] $m" -ForegroundColor Cyan }
+function Ok($m)   { Write-Host "[+] $m" -ForegroundColor Green }
+function Warn($m) { Write-Host "[!] $m" -ForegroundColor Yellow }
+function Fail($m) { Write-Host "[x] $m" -ForegroundColor Red; exit 1 }
+
+<#
+  The Docker CLI writes progress to stderr even on success. With
+  ErrorActionPreference=Stop, piping that into PowerShell turns ordinary output
+  into a terminating NativeCommandError. So every docker call goes through here,
+  which relaxes the preference just for the duration of the call and reports the
+  real result via the exit code.
+#>
+function Invoke-Docker {
+    param([Parameter(ValueFromRemainingArguments = $true)][string[]]$DockerArgs)
+
+    $prev = $ErrorActionPreference
+    $ErrorActionPreference = "Continue"
+    try {
+        $output = & docker @DockerArgs 2>&1 | Out-String
+        $code   = $LASTEXITCODE
+    } finally {
+        $ErrorActionPreference = $prev
+    }
+    return [pscustomobject]@{ Output = $output; ExitCode = $code }
+}
 
 # ── 1. Locate the running Postiz stack ─────────────────────────────────────
 Info "Locating your Postiz stack..."
 
-try {
-    $raw = docker inspect postiz 2>$null | ConvertFrom-Json
-} catch {
-    Fail "Can't inspect the 'postiz' container. Is Docker Desktop running?"
+$inspect = Invoke-Docker inspect postiz
+if ($inspect.ExitCode -ne 0) {
+    Fail "No container named 'postiz' found, or Docker isn't running.`n$($inspect.Output)"
 }
-if (-not $raw) { Fail "No container named 'postiz' found. Is Docker Desktop running?" }
 
-$labels     = $raw[0].Config.Labels
-$workingDir = $labels."com.docker.compose.project.working_dir"
-$configFile = $labels."com.docker.compose.project.config_files"
+try {
+    $meta = $inspect.Output | ConvertFrom-Json
+} catch {
+    Fail "Couldn't parse docker inspect output."
+}
 
-if (-not $workingDir) { Fail "Postiz isn't managed by docker compose; can't add env vars automatically." }
+$workingDir = $meta[0].Config.Labels."com.docker.compose.project.working_dir"
+if (-not $workingDir)            { Fail "Postiz isn't managed by docker compose; can't add env vars automatically." }
 if (-not (Test-Path $workingDir)) { Fail "Compose directory no longer exists: $workingDir" }
 
 Ok "Found stack at: $workingDir"
 
-# ── 2. Collect credentials ─────────────────────────────────────────────────
-Write-Host ""
-Write-Host "Paste the two values from Google Cloud Console" -ForegroundColor White
-Write-Host "(APIs & Services -> Credentials -> your OAuth 2.0 Client ID)" -ForegroundColor DarkGray
-Write-Host ""
-
-$clientId     = (Read-Host "  Client ID").Trim()
-$clientSecret = (Read-Host "  Client Secret").Trim()
-
-if (-not $clientId -or -not $clientSecret) { Fail "Both values are required." }
-if ($clientId -notmatch "\.apps\.googleusercontent\.com$") {
-    Warn "That Client ID doesn't end in .apps.googleusercontent.com - double check you copied the right field."
-}
-
-# ── 3. Write a compose override ────────────────────────────────────────────
-# An override file works no matter how the base compose file declares env
-# (inline block, env_file, or variable substitution), so we don't have to guess.
 $overridePath = Join-Path $workingDir "docker-compose.override.yml"
 
+# ── 2. Credentials: reuse if already present ───────────────────────────────
+$clientId     = $null
+$clientSecret = $null
+
 if (Test-Path $overridePath) {
-    $backup = "$overridePath.bak-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
-    Copy-Item $overridePath $backup
-    Warn "An override already existed. Backed it up to:"
-    Warn "    $backup"
-    Warn "Review it afterwards if Postiz behaves unexpectedly."
+    $existing = Get-Content $overridePath -Raw
+    $idMatch     = [regex]::Match($existing, 'YOUTUBE_CLIENT_ID:\s*"([^"]+)"')
+    $secretMatch = [regex]::Match($existing, 'YOUTUBE_CLIENT_SECRET:\s*"([^"]+)"')
+
+    if ($idMatch.Success -and $secretMatch.Success) {
+        $shown = $idMatch.Groups[1].Value
+        if ($shown.Length -gt 24) { $shown = $shown.Substring(0, 24) + "..." }
+        Write-Host ""
+        Info "Credentials are already saved (Client ID: $shown)"
+        $reuse = Read-Host "    Reuse them? [Y/n]"
+        if ($reuse -eq "" -or $reuse -match "^[Yy]") {
+            $clientId     = $idMatch.Groups[1].Value
+            $clientSecret = $secretMatch.Groups[1].Value
+            Ok "Reusing saved credentials."
+        }
+    }
 }
 
+if (-not $clientId) {
+    Write-Host ""
+    Write-Host "Paste the two values from Google Cloud Console" -ForegroundColor White
+    Write-Host "(Google Auth Platform -> Clients -> your OAuth client)" -ForegroundColor DarkGray
+    Write-Host ""
+
+    $clientId     = (Read-Host "  Client ID").Trim()
+    $clientSecret = (Read-Host "  Client Secret").Trim()
+
+    if (-not $clientId -or -not $clientSecret) { Fail "Both values are required." }
+    if ($clientId -notmatch "\.apps\.googleusercontent\.com$") {
+        Warn "That Client ID doesn't end in .apps.googleusercontent.com - double check the field you copied."
+    }
+
+    if (Test-Path $overridePath) {
+        $backup = "$overridePath.bak-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+        Copy-Item $overridePath $backup
+        Warn "Backed up the previous override to: $backup"
+    }
+}
+
+# ── 3. Write the compose override ──────────────────────────────────────────
+# An override works regardless of how the base compose file declares env
+# (inline block, env_file, or variable substitution), so we don't have to guess.
 $override = @"
 # Added by MuscleMap setup-youtube.ps1
 # Compose merges this on top of the base file automatically.
@@ -80,33 +122,40 @@ Set-Content -Path $overridePath -Value $override -Encoding UTF8
 Ok "Wrote $overridePath"
 
 # ── 4. Recreate the container with the new env ─────────────────────────────
-Info "Restarting Postiz with the new credentials (this takes a minute)..."
+Info "Restarting Postiz with the new credentials..."
 
 Push-Location $workingDir
 try {
-    docker compose up -d postiz 2>&1 | Out-String | Write-Host
-    if ($LASTEXITCODE -ne 0) { Fail "docker compose failed. See output above." }
+    $up = Invoke-Docker compose up -d postiz
+    Write-Host $up.Output -ForegroundColor DarkGray
+    if ($up.ExitCode -ne 0) { Fail "docker compose failed. See output above." }
 } finally {
     Pop-Location
 }
 
 # ── 5. Wait for the backend to actually come up ────────────────────────────
-Info "Waiting for the backend to finish booting..."
+Info "Waiting for the backend to finish booting (this takes a minute or two)..."
 
-$ready = $false
+$ready         = $false
+$temporalFixed = $false
+
 foreach ($i in 1..40) {
     Start-Sleep -Seconds 5
-    $logs = docker logs postiz --tail 40 2>&1 | Out-String
+    $logs = (Invoke-Docker logs postiz --tail 40).Output
 
     if ($logs -match "Backend started successfully") { $ready = $true; break }
 
-    if ($logs -match "Name resolution failed for target dns:temporal") {
-        Warn "Backend can't reach Temporal. Starting those containers..."
-        docker start temporal-postgresql temporal-elasticsearch 2>&1 | Out-Null
-        Start-Sleep -Seconds 15
-        docker start temporal 2>&1 | Out-Null
-        Start-Sleep -Seconds 15
-        docker restart postiz 2>&1 | Out-Null
+    # Postiz needs Temporal; if those containers are down the backend won't boot.
+    if (-not $temporalFixed -and $logs -match "Name resolution failed for target dns:temporal") {
+        Warn "Backend can't reach Temporal. Starting those containers in order..."
+        Invoke-Docker start temporal-postgresql temporal-elasticsearch | Out-Null
+        Start-Sleep -Seconds 20
+        Invoke-Docker start temporal | Out-Null
+        Start-Sleep -Seconds 20
+        Invoke-Docker restart postiz | Out-Null
+        $temporalFixed = $true
+        Info "Temporal started. Waiting on the backend again..."
+        continue
     }
 
     Write-Host "    still booting... ($($i * 5)s)" -ForegroundColor DarkGray
@@ -114,7 +163,7 @@ foreach ($i in 1..40) {
 
 Write-Host ""
 if ($ready) {
-    Ok "Postiz backend is up."
+    Ok "Postiz backend is up with your YouTube credentials."
     Write-Host ""
     Write-Host "Next:" -ForegroundColor White
     Write-Host "  1. Open http://localhost:4007"
