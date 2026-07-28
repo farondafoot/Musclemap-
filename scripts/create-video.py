@@ -156,6 +156,9 @@ def create_video(script_path: str, video_type: str, output_dir: str) -> str:
     import shutil
     shutil.rmtree(tmp_dir, ignore_errors=True)
 
+    # Write path to a known file so nightly-pipeline.sh can read it without parsing stdout
+    (Path(output_dir) / ".last-video-path").write_text(out_path)
+
     print(f"Done: {out_path}")
     return out_path
 

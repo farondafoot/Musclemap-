@@ -17,18 +17,19 @@ echo "[2/5] Pulling Ollama models..."
 ollama pull llama3.2          # content generation + captions
 ollama pull qwen2.5-coder:7b  # coding tasks inside Orca agents
 
-# --- FFmpeg ---
-if ! command -v ffmpeg &>/dev/null; then
-  echo "[3/5] Installing FFmpeg..."
-  if [[ "$OSTYPE" == "linux-gnu"* ]]; then
-    sudo apt-get update -qq && sudo apt-get install -y ffmpeg
-  elif [[ "$OSTYPE" == "darwin"* ]]; then
-    brew install ffmpeg
-  else
-    echo "  Windows: download FFmpeg from https://ffmpeg.org/download.html and add to PATH"
-  fi
+# --- System packages (FFmpeg + TTS engine) ---
+echo "[3/5] Installing system packages..."
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+  sudo apt-get update -qq
+  # ffmpeg: video encoding
+  # espeak-ng: local TTS engine used by pyttsx3 on Linux
+  sudo apt-get install -y ffmpeg espeak-ng libespeak-ng-dev
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+  brew install ffmpeg
+  # macOS uses built-in NSSpeechSynthesizer — no extra TTS package needed
 else
-  echo "[3/5] FFmpeg already installed — skipping"
+  echo "  Windows: install FFmpeg (https://ffmpeg.org/download.html) and add to PATH"
+  echo "  Windows: pyttsx3 uses SAPI5 which is built in — no extra install needed"
 fi
 
 # --- Python dependencies ---

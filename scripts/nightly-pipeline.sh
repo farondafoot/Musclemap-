@@ -53,13 +53,17 @@ for TYPE in "${TYPES[@]}"; do
 
   # Step 2: build video
   log "Building video..."
-  VIDEO_PATH=$(python3 scripts/create-video.py \
+  rm -f output/videos/.last-video-path
+  set +e
+  python3 scripts/create-video.py \
     --script output/scripts/latest.txt \
     --type "$TYPE" \
-    --output output/videos \
-    2>>"$LOG" | tail -1 | sed 's/Done: //')
+    --output output/videos >> "$LOG" 2>&1
+  VIDEO_EXIT=$?
+  set -e
 
-  if [ ! -f "$VIDEO_PATH" ]; then
+  VIDEO_PATH=$(cat output/videos/.last-video-path 2>/dev/null || echo "")
+  if [ $VIDEO_EXIT -ne 0 ] || [ -z "$VIDEO_PATH" ] || [ ! -f "$VIDEO_PATH" ]; then
     log "WARN: Video not created for $TYPE — skipping"
     FAILED=$((FAILED+1))
     continue

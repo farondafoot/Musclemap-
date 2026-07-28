@@ -68,27 +68,14 @@ No markdown, no explanation — just the JSON object."
   OUTPUT_FILE="output/captions/latest.json"
 fi
 
-# Call Ollama
+# Call Ollama via Python helper (no jq required, handles multi-line prompts safely)
 echo "Generating ${MODE} for type '${TYPE}' using ${CONTENT_MODEL}..."
 
-RESPONSE=$(curl -s "${OLLAMA_URL}/api/generate" \
-  -H "Content-Type: application/json" \
-  -d "$(jq -n \
-    --arg model "$CONTENT_MODEL" \
-    --arg prompt "$PROMPT" \
-    '{model: $model, prompt: $prompt, stream: false, options: {temperature: 0.8, num_predict: 512}}'
-  )")
-
-# Extract response text
-TEXT=$(echo "$RESPONSE" | python3 -c "
-import sys, json
-data = json.load(sys.stdin)
-print(data.get('response', '').strip())
-")
+TEXT=$(echo "$PROMPT" | CONTENT_MODEL="$CONTENT_MODEL" OLLAMA_URL="$OLLAMA_URL" \
+  python3 "$(dirname "$0")/ollama-call.py")
 
 if [ -z "$TEXT" ]; then
   echo "ERROR: Ollama returned empty response. Is 'ollama serve' running?"
-  echo "Debug: $RESPONSE"
   exit 1
 fi
 
